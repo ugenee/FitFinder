@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { motion } from "framer-motion"
 import backgroundImage from "@/assets/background.jpg"
@@ -60,20 +59,14 @@ export default function LoginPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} id="login-form">
-              <div className="flex flex-col gap-8">
+              <div className="flex flex-col gap-5">
                 <div className="grid gap-2">
-                  <Label
-                    htmlFor="username"
-                    className="text-gray-200 font-medium"
-                  >
-                    Username
-                  </Label>
                   <Input
                     className="!placeholder-gray-400 text-gray-200"
                     id="username"
                     type="username"
                     value={username}
-                    placeholder="e.g JohnDoe"
+                    label="What's your username?"
                     required
                     onChange={(e) => setUsername(e.target.value)}
                   />
@@ -81,12 +74,6 @@ export default function LoginPage() {
 
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label
-                      htmlFor="password"
-                      className="text-gray-200 font-medium"
-                    >
-                      Password
-                    </Label>
                     <a
                       href="#"
                       className="ml-auto inline-block text-sm underline-offset-4 hover:underline text-gray-200"
@@ -96,18 +83,18 @@ export default function LoginPage() {
                   </div>
                   <div className="relative">
                   <Input
-                    className="!placeholder-gray-400 text-gray-200"
+                    className="text-gray-200"
                     id="password"
+                    label="What's your password?"
                     type={showPassword ? "text" : "password"}
                     value={password}
-                    placeholder="e.g JohnDoe123!"
                     required
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute top-2 right-2 text-gray-200 hover:text-gray-400 cursor-pointer"
+                  className="absolute top-3.5 right-3 text-gray-200 hover:text-gray-400 cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={20}/> : <Eye size={20}/>}
                   </button>
