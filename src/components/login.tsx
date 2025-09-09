@@ -19,6 +19,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+  }
+  
   return (
     <motion.div
       className="relative w-full h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
@@ -52,10 +56,10 @@ export default function LoginPage() {
             <CardTitle className="text-2xl font-semibold text-gray-100">
               Welcome back!
             </CardTitle>
-            <CardDescription className="text-gray-400" > Sign in to continue your fitness journey </CardDescription>
+            <CardDescription className="text-gray-400" > Sign in to start your fitness journey </CardDescription>
           </CardHeader>
           <CardContent>
-            <form>
+            <form onSubmit={handleLogin} id="login-form">
               <div className="flex flex-col gap-8">
                 <div className="grid gap-2">
                   <Label
@@ -67,7 +71,7 @@ export default function LoginPage() {
                   <Input
                     className="!placeholder-gray-400 text-gray-200"
                     id="username"
-                    type="text"
+                    type="username"
                     value={username}
                     placeholder="e.g JohnDoe"
                     required
@@ -96,8 +100,8 @@ export default function LoginPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
-                    required
                     placeholder="e.g JohnDoe123!"
+                    required
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
@@ -116,6 +120,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full bg-gray-200 text-black hover:bg-gray-400 mb-4 cursor-pointer"
+              form="login-form"
             >
               Login
             </Button>

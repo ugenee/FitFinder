@@ -117,4 +117,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+}
+
+::selection {
+  @apply bg-gray-200 text-black;
 }
