@@ -9,6 +9,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import backgroundImage from "@/assets/background.jpg"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { useNavigate } from "react-router-dom"
 
 
 const genderEnum = z.enum(["Male", "Female"]);
@@ -39,8 +40,11 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+
 export default function SignUp(){
     const [showPassword, setShowPassword] = useState(false);
+    
+    const navigate = useNavigate()
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -202,12 +206,12 @@ export default function SignUp(){
             <hr className="bg-gray-200 w-full"/>
             <p className="text-gray-200 text-sm">
             Already have an account?{" "}
-            <a
-                href="/login"
+            <button
+                onClick={() => navigate("/login")}
                 className="font-medium underline hover:text-gray-400"
             >
                 Login
-            </a>
+            </button>
             </p>
         </CardFooter>
 

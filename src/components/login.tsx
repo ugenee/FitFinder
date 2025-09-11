@@ -13,6 +13,7 @@ import { motion } from "framer-motion"
 import backgroundImage from "@/assets/background.jpg"
 import { Eye, EyeOff } from "lucide-react";
 import { Label } from "./ui/label"
+import { useNavigate } from "react-router-dom"
 
 export default function LoginPage() {
   const [username, setUsername] = useState("")
@@ -22,6 +23,8 @@ export default function LoginPage() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
   }
+  
+  const navigate = useNavigate()
   
   return (
     <motion.div
@@ -64,7 +67,7 @@ export default function LoginPage() {
                 <div className="grid gap-2">
                   <Label className="text-gray-200">Username</Label> 
                   <Input
-                    className="!placeholder-gray-400 text-gray-200"
+                    className="!placeholder-gray-400 text-gray-200 autofill:shadow-[inset_0_0_0px_1000px_rgb(16,16,16)] autofill:text-white"
                     id="username"
                     type="username"
                     value={username}
@@ -117,12 +120,12 @@ export default function LoginPage() {
             <hr className="bg-gray-200 w-full" />
             <p className="text-gray-200 text-sm">
               Don't have an account?{" "}
-              <a
-                href="/signup"
+              <button
+                onClick={() => navigate("/signup")}
                 className="font-medium underline hover:text-gray-400"
               >
                 Sign Up
-              </a>
+              </button>
             </p>
           </CardFooter>
         </Card>
