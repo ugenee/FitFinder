@@ -41,7 +41,7 @@ function Input({
         htmlFor={inputId}
         className={cn(
           "absolute text-sm text-gray-400 duration-300 transform -translate-y-3 scale-75 top-3.5 z-10 origin-[0] start-4",
-          "peer-focus:text-gray-200 peer-focus:dark:text-blue-400",
+          "peer-focus:text-gray-200 peer-focus:dark:text-gray-200",
           "peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0",
           "peer-focus:scale-75 peer-focus:-translate-y-3",
           "rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto",

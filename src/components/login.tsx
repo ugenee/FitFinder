@@ -12,6 +12,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import backgroundImage from "@/assets/background.jpg"
 import { Eye, EyeOff } from "lucide-react";
+import { Label } from "./ui/label"
 
 export default function LoginPage() {
   const [username, setUsername] = useState("")
@@ -61,6 +62,7 @@ export default function LoginPage() {
             <form onSubmit={handleLogin} id="login-form">
               <div className="flex flex-col gap-5">
                 <div className="grid gap-2">
+                  <Label className="text-gray-200">Username</Label> 
                   <Input
                     className="!placeholder-gray-400 text-gray-200"
                     id="username"
@@ -74,6 +76,7 @@ export default function LoginPage() {
 
                 <div className="grid gap-2">
                   <div className="flex items-center">
+                    <Label className="text-gray-200">Password</Label>
                     <a
                       href="#"
                       className="ml-auto inline-block text-sm underline-offset-4 hover:underline text-gray-200"

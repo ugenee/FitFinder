@@ -7,6 +7,8 @@ import { Button } from "./ui/button";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import backgroundImage from "@/assets/background.jpg"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 
 const genderEnum = z.enum(["Male", "Female"]);
@@ -26,22 +28,13 @@ const formSchema = z.object({
     .regex(/[a-z]/, "at least one lowercase")
     .regex(/[0-9]/, "at least one number")
     .regex(/[!@#$%^&*_]/, "at least one special character"),
-    firstName: z
-    .string()
-    .min(2, "at least 2 characters")
-    .max(50, "at most 50 characters")
-    .regex(/^[A-Za-z]+$/, "letters and spaces only"),
-    lastName: z
-    .string()
-    .min(2, "at least 2 characters")
-    .max(50, "at most 50 characters")
-    .regex(/^[A-Za-z]+$/, "letters and spaces only"),
     age: z.coerce
     .number()
     .min(16, "Age must be at least 16")
-    .max(80, "Age must be below 80")
-    .optional(),
-    gender: genderEnum.optional(),
+    .max(80, "Age must be below 80"),
+    gender: genderEnum.refine((val) => !!val, {
+    message: "Gender is required",
+  }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -54,8 +47,6 @@ export default function SignUp(){
             email: "",
             username: "",
             password: "",
-            firstName: "",
-            lastName: "",
             age: undefined,
             gender: undefined,
     
@@ -68,21 +59,39 @@ export default function SignUp(){
 
 
     return (
+        <div style={{ backgroundImage: `url(${backgroundImage})` }} 
+        className="relative w-full h-screen bg-cover bg-center flex flex-col items-center justify-center px-4">
         
-        <div>
-        <h1 className="font-bold text-3xl">Create Account</h1>
+        <div className="relative text-center mb-10">
+        <h1 className="font-bold text-3xl text-white">Create Account</h1>
+        <p className="mt-3 text-lg text-gray-200">
+          Create your account and start your fitness journey
+        </p>
+        </div>
+        
+        <div className="relative w-full max-w-xl">
+        <Card className="w-full bg-white/0 opacity-100 border-white/20 shadow-md shadow-gray-200">
+          <CardHeader>
+            <CardTitle className="text-2xl font-semibold text-gray-100">
+              Create Account    
+            </CardTitle>
+            <CardDescription className="text-gray-400" > Sign in to start your fitness journey </CardDescription>
+          </CardHeader>
+          <CardContent>
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" noValidate>
-                <div>
+            <form id="signup" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
+                <div className="flex flex-col">
+
                 <FormField
                 control={form.control}
                 name="email"
                 render={({field}) => (
                     <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel className="text-gray-200">Email</FormLabel>
                         <FormControl>
-                            <Input 
-                            placeholder="email@example.com" {...field}
+                            <Input
+                            label="what's your email?" {...field}
+                            className="autofill:shadow-[inset_0_0_0px_1000px_rgb(16,16,16)] autofill:text-white"
                             />
                         </FormControl>
                         <FormMessage />
@@ -97,10 +106,12 @@ export default function SignUp(){
                 name="username"
                 render={({field}) => (
                     <FormItem>
-                        <FormLabel>Username</FormLabel>
+                        <FormLabel className="text-gray-200">Username</FormLabel>
                         <FormControl>
                             <Input 
-                            placeholder="JohnDoe123" {...field}
+                            label="what's your userame?" {...field}
+                            className="autofill:shadow-[inset_0_0_0px_1000px_rgb(16,16,16)] autofill:text-white"
+                            
                             />
                         </FormControl>
                         <FormMessage />
@@ -115,18 +126,18 @@ export default function SignUp(){
                 name="password"
                 render={({field}) => (
                     <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel className="text-gray-200">Password</FormLabel>
                         <FormControl>
                             <div className="relative">
                             <Input 
-                            placeholder="JohnDoe123!" {...field}
+                            label="what's your password?" {...field}
                             type={showPassword ? "text" : "password"}
-                            required
+                            aria-invalid = {form.formState.errors.password !== undefined}
                             />
                             <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute top-2 right-2"
+                            className="absolute top-3.5 right-3 text-gray-200 hover:text-gray-400"
                             >
                             {showPassword ? <EyeOff size={20}/> : <Eye size={20}/>}
                                 
@@ -138,48 +149,16 @@ export default function SignUp(){
                 )}>
                 </FormField>
                 </div>
-
-                <div>
-                <FormField
-                control={form.control}
-                name="firstName"
-                render={({field}) => (
-                    <FormItem>
-                        <FormLabel>First Name</FormLabel>
-                        <FormControl>
-                            <Input placeholder="John" {...field}/>
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}>
-                </FormField>
-                </div>
-
-                <div>
-                <FormField
-                control={form.control}
-                name="lastName"
-                render={({field}) => (
-                    <FormItem>
-                        <FormLabel>Last Name</FormLabel>
-                        <FormControl>
-                            <Input placeholder="Doe" {...field}/>
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}>
-                </FormField>
-                </div>
-
+                
                 <div>
                 <FormField
                 control={form.control}
                 name="age"
                 render={({field}) => (
                     <FormItem>
-                        <FormLabel>Age</FormLabel>
+                        <FormLabel className="text-gray-200">Age</FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder="e.g. 30" {...field}/>
+                            <Input type="number" label="what's your age?" className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"{...field}/>
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -193,13 +172,13 @@ export default function SignUp(){
                     name="gender"
                     render={({field}) => (
                         <FormItem>
-                            <FormLabel>Gender</FormLabel>
+                            <FormLabel className="text-gray-200">Gender</FormLabel>
                             <Select
                             value={field.value ?? ""}
                             onValueChange={field.onChange}
                             >
                             <FormControl>
-                                <SelectTrigger className="w-full">
+                                <SelectTrigger size="md" className="w-full text-gray-200">
                                     <SelectValue placeholder="Select your gender"/>
                                 </SelectTrigger>
                             </FormControl>
@@ -215,12 +194,27 @@ export default function SignUp(){
 
                     )}/>
                 </div>
-
-
-
-                <Button type="submit">Sign Up</Button>
             </form>
         </Form>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-2">
+            <Button type="submit" className="w-full bg-gray-200 hover:bg-gray-400 text-black mb-4" form="signup">Sign Up</Button>
+            <hr className="bg-gray-200 w-full"/>
+            <p className="text-gray-200 text-sm">
+            Already have an account?{" "}
+            <a
+                href="/login"
+                className="font-medium underline hover:text-gray-400"
+            >
+                Login
+            </a>
+            </p>
+        </CardFooter>
+
+
+        </Card>
         </div>
+        </div>
+        
     )
 }
