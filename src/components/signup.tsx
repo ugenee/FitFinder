@@ -314,7 +314,7 @@ export default function SignUp(){
             <button
                 onClick={() => navigate("/login")}
                 className="relative font-semibold text-gray-200 after:content-[''] after:absolute after:left-1/2 after:bottom-0
-                after:w-0 after:h-[2px] after:bg-gray-200 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0"
+                after:w-0 after:h-[2px] after:bg-gray-200 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0 cursor-pointer"
               >
                 Login Here
             </button>
