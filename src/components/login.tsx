@@ -27,44 +27,86 @@ export default function LoginPage() {
   const navigate = useNavigate()
   
   return (
-    <motion.div
+    <div
       className="relative w-full h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
       style={{ backgroundImage: `url(${backgroundImage})` }}
-      initial={{ scale: 1.1, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 1.2, ease: "easeOut" }}
     >
+
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+        transition={{ 
+          type: "spring",
+          damping: 10,
+          stiffness: 100
+        }}
         className="relative text-center mb-10"
       >
-        <h1 className="text-5xl font-extrabold text-white">
+        <motion.h1 
+        className="text-5xl font-extrabold text-white"
+        initial={{ scale: 0.9 }}
+          animate={{ scale: 1 }}
+          transition={{ 
+            type: "spring",
+            damping: 10,
+            stiffness: 100,
+            delay: 0.2
+          }}
+        >
           FitFinder
-        </h1>
-        <p className="mt-3 text-lg text-gray-200">
+        </motion.h1>
+
+        <motion.p 
+        className="mt-3 text-lg text-gray-200"
+        initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ 
+            type: "spring",
+            damping: 10,
+            stiffness: 100,
+            delay: 0.4
+          }}
+        >
           Your fitness journey begins here – Join the FitFinder community
-        </p>
+        </motion.p>
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+        initial={{ opacity: 0, y: 50, scale: 0.95 }}
+        animate={{ 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          transition: {
+            type: "spring",
+            damping: 10,
+            stiffness: 100,
+            delay: 0.3
+          }
+        }}
         className="relative w-full max-w-lg"
       >
         <Card className="w-full bg-white/0 opacity-100 border-white/20 shadow-md shadow-gray-200">
           <CardHeader>
-            <CardTitle className="text-2xl font-semibold text-gray-100">
-              Welcome back!
-            </CardTitle>
+              <CardTitle className="text-2xl font-semibold text-gray-100">
+                Welcome back!
+              </CardTitle>
             <CardDescription className="text-gray-400" > Sign in to start your fitness journey </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} id="login-form">
               <div className="flex flex-col gap-5">
-                <div className="grid gap-2">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    type: "spring",
+                    damping: 12,
+                    stiffness: 100,
+                    delay: 0.7
+                  }}
+                  className="grid gap-2"
+                >
                   <Label className="text-gray-200">Username</Label> 
                   <Input
                     className="!placeholder-gray-400 text-gray-200 autofill:shadow-[inset_0_0_0px_1000px_rgb(16,16,16)] autofill:text-white"
@@ -75,9 +117,19 @@ export default function LoginPage() {
                     required
                     onChange={(e) => setUsername(e.target.value)}
                   />
-                </div>
+                </motion.div>
 
-                <div className="grid gap-2">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    type: "spring",
+                    damping: 12,
+                    stiffness: 100,
+                    delay: 0.7
+                  }}
+                  className="grid gap-2"
+                >
                   <div className="flex items-center">
                     <Label className="text-gray-200">Password</Label>
                     <a
@@ -105,7 +157,7 @@ export default function LoginPage() {
                     {showPassword ? <EyeOff size={20}/> : <Eye size={20}/>}
                   </button>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </form>
           </CardContent>
@@ -130,6 +182,6 @@ export default function LoginPage() {
           </CardFooter>
         </Card>
       </motion.div>
-    </motion.div>
+    </div>
   )
 }

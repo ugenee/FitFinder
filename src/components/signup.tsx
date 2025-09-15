@@ -10,32 +10,35 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import backgroundImage from "@/assets/background.jpg"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
+import { motion } from "framer-motion"
 
 
 const genderEnum = z.enum(["Male", "Female"]);
 
 
 const formSchema = z.object({
-    email: z.string().email("Invalid email"),
-    username: z
+  email: z.string().email("Invalid email"),
+  username: z
     .string()
     .min(8, "at least 8 characters")
     .max(20, "at most 20 characters")
     .regex(/^[a-zA-Z0-9]+$/, "Alphanumeric only"),
-    password: z
+  password: z
     .string()
     .min(8, "at least 8 characters")
     .regex(/[A-Z]/, "at least one uppercase")
     .regex(/[a-z]/, "at least one lowercase")
     .regex(/[0-9]/, "at least one number")
     .regex(/[!@#$%^&*_]/, "at least one special character"),
-    age: z.coerce
-    .number()
-    .min(16, "Age must be at least 16")
-    .max(80, "Age must be below 80"),
-    gender: genderEnum.refine((val) => !!val, {
-    message: "Gender is required",
-  }),
+  age: z.union([
+    z.number().min(16, "Age must be at least 16").max(80, "Age must be below 80"),
+    z.string()
+      .transform((val) => val === "" ? undefined : Number(val))
+      .refine((val) => val === undefined || !isNaN(val), "Must be a number")
+      .refine((val) => val === undefined || val >= 16, "Age must be at least 16")
+      .refine((val) => val === undefined || val <= 80, "Age must be below 80")
+  ]),
+  gender: genderEnum
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -63,17 +66,65 @@ export default function SignUp(){
 
 
     return (
-        <div style={{ backgroundImage: `url(${backgroundImage})` }} 
-        className="relative w-full h-screen bg-cover bg-center flex flex-col items-center justify-center px-4">
+        <div 
+        style={{ backgroundImage: `url(${backgroundImage})` }} 
+        className="relative w-full h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
+        >
         
-        <div className="relative text-center mb-10">
-        <h1 className="font-bold text-3xl text-white">Create Account</h1>
-        <p className="mt-3 text-lg text-gray-200">
+        <motion.div 
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ 
+          type: "spring",
+          damping: 10,
+          stiffness: 100
+        }}
+        className="relative text-center mb-10"
+        >
+        <motion.h1 
+        className="text-5xl font-extrabold text-white"
+        initial={{ scale: 0.9 }}
+          animate={{ scale: 1 }}
+          transition={{ 
+            type: "spring",
+            damping: 10,
+            stiffness: 100,
+            delay: 0.2
+          }}
+        >
+          FitFinder
+        </motion.h1>
+        <motion.p 
+        className="mt-3 text-lg text-gray-200"
+        initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ 
+            type: "spring",
+            damping: 10,
+            stiffness: 100,
+            delay: 0.4
+          }}
+        >
           Create your account and start your fitness journey
-        </p>
-        </div>
+        </motion.p>
+        </motion.div>
         
-        <div className="relative w-full max-w-xl">
+        <motion.div 
+        initial={{ opacity: 0, y: 50, scale: 0.95 }}
+        animate={{ 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          transition: {
+            type: "spring",
+            damping: 10,
+            stiffness: 100,
+            delay: 0.3
+          }
+        }}
+        className="relative w-full max-w-xl"
+        >
+        
         <Card className="w-full bg-white/0 opacity-100 border-white/20 shadow-md shadow-gray-200">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold text-gray-100">
@@ -85,7 +136,16 @@ export default function SignUp(){
         <Form {...form}>
             <form id="signup" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
                 <div className="flex flex-col">
-
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    type: "spring",
+                    damping: 12,
+                    stiffness: 100,
+                    delay: 0.7
+                  }}
+                >
                 <FormField
                 control={form.control}
                 name="email"
@@ -102,9 +162,20 @@ export default function SignUp(){
                     </FormItem>
                 )}>
                 </FormField>
+                </motion.div>
                 </div>
-
+                
                 <div>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    type: "spring",
+                    damping: 12,
+                    stiffness: 100,
+                    delay: 0.7
+                  }}
+                >
                 <FormField
                 control={form.control}
                 name="username"
@@ -122,9 +193,20 @@ export default function SignUp(){
                     </FormItem>
                 )}>
                 </FormField>
+                </motion.div>
                 </div>
 
                 <div>
+                    <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    type: "spring",
+                    damping: 12,
+                    stiffness: 100,
+                    delay: 0.7
+                  }}
+                >
                 <FormField
                 control={form.control}
                 name="password"
@@ -152,9 +234,20 @@ export default function SignUp(){
                     </FormItem>
                 )}>
                 </FormField>
+                </motion.div>
                 </div>
                 
                 <div>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    type: "spring",
+                    damping: 12,
+                    stiffness: 100,
+                    delay: 0.7
+                  }}
+                >
                 <FormField
                 control={form.control}
                 name="age"
@@ -168,9 +261,20 @@ export default function SignUp(){
                     </FormItem>
                 )}>
                 </FormField>
+                </motion.div>
                 </div>
 
                 <div>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    type: "spring",
+                    damping: 12,
+                    stiffness: 100,
+                    delay: 0.7
+                  }}
+                >
                     <FormField
                     control={form.control}
                     name="gender"
@@ -197,6 +301,7 @@ export default function SignUp(){
                         </FormItem>
 
                     )}/>
+                    </motion.div>
                 </div>
             </form>
         </Form>
@@ -217,7 +322,7 @@ export default function SignUp(){
 
 
         </Card>
-        </div>
+        </motion.div>
         </div>
         
     )
