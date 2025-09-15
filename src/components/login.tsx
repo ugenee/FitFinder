@@ -28,7 +28,7 @@ export default function LoginPage() {
   
   return (
     <div
-      className="relative w-full h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
+      className="relative w-full min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4 py-6 overflow-y-auto"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
 
@@ -174,9 +174,10 @@ export default function LoginPage() {
               Don't have an account?{" "}
               <button
                 onClick={() => navigate("/signup")}
-                className="font-medium underline hover:text-gray-400"
+                className="relative font-semibold text-gray-200 after:content-[''] after:absolute after:left-1/2 after:bottom-0
+                after:w-0 after:h-[2px] after:bg-gray-200 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0"
               >
-                Sign Up
+                Sign Up Here
               </button>
             </p>
           </CardFooter>

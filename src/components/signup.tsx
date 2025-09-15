@@ -34,7 +34,7 @@ const formSchema = z.object({
     z.number().min(16, "Age must be at least 16").max(80, "Age must be below 80"),
     z.string()
       .transform((val) => val === "" ? undefined : Number(val))
-      .refine((val) => val === undefined || !isNaN(val), "Must be a number")
+      .refine((val) => val === undefined || !isNaN(val), "Must be a number")    
       .refine((val) => val === undefined || val >= 16, "Age must be at least 16")
       .refine((val) => val === undefined || val <= 80, "Age must be below 80")
   ]),
@@ -68,7 +68,7 @@ export default function SignUp(){
     return (
         <div 
         style={{ backgroundImage: `url(${backgroundImage})` }} 
-        className="relative w-full h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
+        className="relative w-full min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4 py-8 overflow-y-auto"
         >
         
         <motion.div 
@@ -79,7 +79,7 @@ export default function SignUp(){
           damping: 10,
           stiffness: 100
         }}
-        className="relative text-center mb-10"
+        className="relative text-center mb-10 sm:mb-10 px-2"
         >
         <motion.h1 
         className="text-5xl font-extrabold text-white"
@@ -313,9 +313,10 @@ export default function SignUp(){
             Already have an account?{" "}
             <button
                 onClick={() => navigate("/login")}
-                className="font-medium underline hover:text-gray-400"
-            >
-                Login
+                className="relative font-semibold text-gray-200 after:content-[''] after:absolute after:left-1/2 after:bottom-0
+                after:w-0 after:h-[2px] after:bg-gray-200 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0"
+              >
+                Login Here
             </button>
             </p>
         </CardFooter>
