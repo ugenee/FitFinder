@@ -117,4 +117,15 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+}
+
+::selection {
+  @apply bg-gray-200 text-black;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: white !important;
+  /* -webkit-box-shadow: 0 0 0px 1000px black inset !important; keep background black */
+  caret-color: white !important; /* makes the | caret visible */
 }
