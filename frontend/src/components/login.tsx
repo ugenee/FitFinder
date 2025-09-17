@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { motion } from "framer-motion"
 import backgroundImage from "@/assets/background.jpg"
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react"
 import { Label } from "./ui/label"
 import { useNavigate } from "react-router-dom"
 
