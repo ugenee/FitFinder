@@ -9,7 +9,7 @@ export default defineConfig({
     output: {
       mode: "tags-split",
       namingConvention: "kebab-case",
-      baseUrl: `http://${process.env.VITE_BACKEND_URL}/`, // load from .env
+      baseUrl: "http://localhost:8000", // load from .env
       target: "src/api/endpoints",
       schemas: "src/api/model",
       fileExtension: ".gen.ts",

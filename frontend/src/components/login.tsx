@@ -14,15 +14,30 @@ import backgroundImage from "@/assets/background.jpg"
 import { Eye, EyeOff } from "lucide-react"
 import { Label } from "./ui/label"
 import { useNavigate } from "react-router-dom"
+import { useLoginAuthLoginPost } from "@/api/endpoints/auth/auth.gen";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
 
+  
+  const { mutate, isPending } = useLoginAuthLoginPost({
+    mutation: {
+      onSuccess: () => {
+        console.log("Logged in");
+        // navigate("/dashboard");
+      },
+      onError: () => {
+        console.error("Login failed");
+      },
+    },
+  });
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-  }
+    mutate({data : {username: username.trim(), password: password.trim()}});
+  };
   
   const navigate = useNavigate()
   
@@ -166,8 +181,9 @@ export default function LoginPage() {
               type="submit"
               className="w-full bg-gray-200 text-black hover:bg-gray-400 mb-4 cursor-pointer"
               form="login-form"
+              disabled={isPending} // disable while loading
             >
-              Login
+              {isPending? "Logging in ..." : "Login"}
             </Button>
             <hr className="bg-gray-200 w-full" />
             <p className="text-gray-200 text-sm">

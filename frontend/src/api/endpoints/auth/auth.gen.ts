@@ -7,6 +7,7 @@
 import { useMutation } from "@tanstack/react-query";
 import type {
   MutationFunction,
+  QueryClient,
   UseMutationOptions,
   UseMutationResult,
 } from "@tanstack/react-query";
@@ -33,7 +34,7 @@ export const registerAuthRegisterPost = (
 ) => {
   return customInstance<UserWithToken>(
     {
-      url: `http://undefined/auth/register`,
+      url: `http://localhost:8000/auth/register`,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       data: userCreate,
@@ -94,15 +95,18 @@ export type RegisterAuthRegisterPostMutationError =
 export const useRegisterAuthRegisterPost = <
   TError = ErrorType<HTTPValidationError>,
   TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof registerAuthRegisterPost>>,
-    TError,
-    { data: BodyType<UserCreate> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationResult<
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof registerAuthRegisterPost>>,
+      TError,
+      { data: BodyType<UserCreate> },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
   Awaited<ReturnType<typeof registerAuthRegisterPost>>,
   TError,
   { data: BodyType<UserCreate> },
@@ -110,7 +114,7 @@ export const useRegisterAuthRegisterPost = <
 > => {
   const mutationOptions = getRegisterAuthRegisterPostMutationOptions(options);
 
-  return useMutation(mutationOptions);
+  return useMutation(mutationOptions, queryClient);
 };
 /**
  * @summary Login
@@ -150,7 +154,7 @@ export const loginAuthLoginPost = (
 
   return customInstance<unknown>(
     {
-      url: `http://undefined/auth/login`,
+      url: `http://localhost:8000/auth/login`,
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       data: formUrlEncoded,
@@ -210,15 +214,18 @@ export type LoginAuthLoginPostMutationError = ErrorType<HTTPValidationError>;
 export const useLoginAuthLoginPost = <
   TError = ErrorType<HTTPValidationError>,
   TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof loginAuthLoginPost>>,
-    TError,
-    { data: BodyType<BodyLoginAuthLoginPost> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationResult<
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof loginAuthLoginPost>>,
+      TError,
+      { data: BodyType<BodyLoginAuthLoginPost> },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
   Awaited<ReturnType<typeof loginAuthLoginPost>>,
   TError,
   { data: BodyType<BodyLoginAuthLoginPost> },
@@ -226,5 +233,5 @@ export const useLoginAuthLoginPost = <
 > => {
   const mutationOptions = getLoginAuthLoginPostMutationOptions(options);
 
-  return useMutation(mutationOptions);
+  return useMutation(mutationOptions, queryClient);
 };
