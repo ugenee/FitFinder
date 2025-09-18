@@ -24,5 +24,5 @@ class UserRead(BaseModel):
         from_attributes = True
 
 class UserWithToken(UserRead):
-    access_token = str
-    token_type = str
+    access_token : str
+    token_type : str

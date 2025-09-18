@@ -18,7 +18,7 @@ def get_db():
         db.close()
 
 async def get_current_user(
-        request = Request,
+        request : Request,
         db: Session = Depends(get_db)
         ):
     credentials_exception = HTTPException(

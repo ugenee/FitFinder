@@ -1,18 +1,18 @@
 from datetime import datetime, timedelta
-from core.config import Settings
+from core.config import settings
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 
 
-SECRET_KEY = Settings.SECRET_KEY
-ALGORITHM = Settings.ALGORITHM
-ACCESS_TOKEN_EXPIRES_MINUTES = Settings.ACCESS_TOKEN_EXPIRE_MINUTES
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
+ACCESS_TOKEN_EXPIRES_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth_2_scheme = OAuth2PasswordBearer(tokenURL = "token")
+oauth_2_scheme = OAuth2PasswordBearer(tokenUrl = "token")
 
 
 def verify_password(plain_password: str, hashed_password: str):

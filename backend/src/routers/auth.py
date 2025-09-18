@@ -12,16 +12,15 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 def set_cookie(response: Response, access_token: str):
-    """Helper function to set a cookie"""
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        secuure=True,
+        secure=False,  # set to True if running HTTPS
         max_age=ACCESS_TOKEN_EXPIRES_MINUTES * 60,
-        secure=False,  # Set to True if using HTTPS
         samesite="lax",
     )
+
 
 
 @router.post("/register")
@@ -38,15 +37,15 @@ def register(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username, email, or phone already registered"
         )
-
+    
     hashed_password = get_password_hash(user.user_password)
 
     new_user = User(
-        username = user.user_username,
-        password = hashed_password(user.user_password),
-        age =  user.user_age,
-        email = user.user_email,
-        gender = user.user_gender
+        user_username = user.user_username,
+        user_password = hashed_password,
+        user_age =  user.user_age,
+        user_email = user.user_email,
+        user_gender = user.user_gender
     )
 
     db.add(new_user)
@@ -54,7 +53,7 @@ def register(
     db.refresh(new_user)
 
     access_token = create_access_token(
-        data={"sub": new_user.user_username}, expires_delta=timedelta(minutes=float(ACCESS_TOKEN_EXPIRES_MINUTES))
+        data={"sub": new_user.user_username}, expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRES_MINUTES)
     )
 
     set_cookie(response, access_token)
