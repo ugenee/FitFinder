@@ -11,6 +11,7 @@ export * from "./body-login-auth-login-post-client-secret";
 export * from "./body-login-auth-login-post-grant-type";
 export * from "./gender";
 export * from "./httpvalidation-error";
+export * from "./token";
 export * from "./user-create";
 export * from "./user-with-token";
 export * from "./validation-error";

@@ -22,26 +22,20 @@ import type {
 import { customInstance } from "../../mutator/custom-instance";
 import type { ErrorType, BodyType } from "../../mutator/custom-instance";
 
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
 /**
  * @summary Register
  */
 export const registerAuthRegisterPost = (
   userCreate: BodyType<UserCreate>,
-  options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<UserWithToken>(
-    {
-      url: `http://localhost:8000/auth/register`,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      data: userCreate,
-      signal,
-    },
-    options,
-  );
+  return customInstance<UserWithToken>({
+    url: `http://localhost:8000/auth/register`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: userCreate,
+    signal,
+  });
 };
 
 export const getRegisterAuthRegisterPostMutationOptions = <
@@ -54,7 +48,6 @@ export const getRegisterAuthRegisterPostMutationOptions = <
     { data: BodyType<UserCreate> },
     TContext
   >;
-  request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof registerAuthRegisterPost>>,
   TError,
@@ -62,13 +55,13 @@ export const getRegisterAuthRegisterPostMutationOptions = <
   TContext
 > => {
   const mutationKey = ["registerAuthRegisterPost"];
-  const { mutation: mutationOptions, request: requestOptions } = options
+  const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
       options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
+    : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof registerAuthRegisterPost>>,
@@ -76,7 +69,7 @@ export const getRegisterAuthRegisterPostMutationOptions = <
   > = (props) => {
     const { data } = props ?? {};
 
-    return registerAuthRegisterPost(data, requestOptions);
+    return registerAuthRegisterPost(data);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -103,7 +96,6 @@ export const useRegisterAuthRegisterPost = <
       { data: BodyType<UserCreate> },
       TContext
     >;
-    request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
@@ -121,7 +113,6 @@ export const useRegisterAuthRegisterPost = <
  */
 export const loginAuthLoginPost = (
   bodyLoginAuthLoginPost: BodyType<BodyLoginAuthLoginPost>,
-  options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   const formUrlEncoded = new URLSearchParams();
@@ -152,16 +143,13 @@ export const loginAuthLoginPost = (
     );
   }
 
-  return customInstance<unknown>(
-    {
-      url: `http://localhost:8000/auth/login`,
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      data: formUrlEncoded,
-      signal,
-    },
-    options,
-  );
+  return customInstance<unknown>({
+    url: `http://localhost:8000/auth/login`,
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    data: formUrlEncoded,
+    signal,
+  });
 };
 
 export const getLoginAuthLoginPostMutationOptions = <
@@ -174,7 +162,6 @@ export const getLoginAuthLoginPostMutationOptions = <
     { data: BodyType<BodyLoginAuthLoginPost> },
     TContext
   >;
-  request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof loginAuthLoginPost>>,
   TError,
@@ -182,13 +169,13 @@ export const getLoginAuthLoginPostMutationOptions = <
   TContext
 > => {
   const mutationKey = ["loginAuthLoginPost"];
-  const { mutation: mutationOptions, request: requestOptions } = options
+  const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
       options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
+    : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof loginAuthLoginPost>>,
@@ -196,7 +183,7 @@ export const getLoginAuthLoginPostMutationOptions = <
   > = (props) => {
     const { data } = props ?? {};
 
-    return loginAuthLoginPost(data, requestOptions);
+    return loginAuthLoginPost(data);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -222,7 +209,6 @@ export const useLoginAuthLoginPost = <
       { data: BodyType<BodyLoginAuthLoginPost> },
       TContext
     >;
-    request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<

@@ -22,7 +22,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   
-  const { mutate, isPending } = useLoginAuthLoginPost({
+  const { mutate, isPending, isError, error } = useLoginAuthLoginPost({
     mutation: {
       onSuccess: () => {
         console.log("Logged in");
@@ -176,7 +176,13 @@ export default function LoginPage() {
               </div>
             </form>
           </CardContent>
+          
           <CardFooter className="flex-col gap-2">
+            {isError && (
+              <div className="text-sm text-red-500">
+                {error.response?.data.detail?.map((err) => err.msg).join(", ") ?? "Login failed. Please check your credentials."}
+              </div>
+            )}
             <Button
               type="submit"
               className="w-full bg-gray-200 text-black hover:bg-gray-400 mb-4 cursor-pointer"
