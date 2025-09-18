@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     MAIL_FROM_NAME: str = Field(default=...)
 
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30 * 24 * 60  # 30 days in minutes
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
     class Config:
         env_file = ".env"
