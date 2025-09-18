@@ -11,9 +11,10 @@ import backgroundImage from "@/assets/background.jpg"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
+import { useRegisterAuthRegisterPost } from "@/api/endpoints/auth/auth.gen";
+import { Gender , type UserCreate } from "@/api/model";
 
-
-const genderEnum = z.enum(["Male", "Female"]);
+const genderEnum = z.enum(Gender);
 
 
 const formSchema = z.object({
@@ -46,6 +47,19 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function SignUp(){
     const [showPassword, setShowPassword] = useState(false);
+
+    const { mutate: addUser, isPending, isError, error } = useRegisterAuthRegisterPost({
+      mutation: {
+        onSuccess: () => {
+          console.log("Success");
+          navigate("/login");
+        },
+        onError : () => {
+          console.log("Fail");
+        },
+
+      }
+});
     
     const navigate = useNavigate()
     const form = useForm<FormData>({
@@ -61,8 +75,16 @@ export default function SignUp(){
     });
 
     function onSubmit(values: z.infer<typeof formSchema>){
-        console.log(values)
-    }
+      const userData: UserCreate = {
+        user_age: values.age as number,
+        user_email: values.email,
+        user_username: values.username,
+        user_password: values.password,
+        user_gender: values.gender
+      };
+    console.log(userData);
+    addUser({ data: userData });
+  };
 
 
     return (
@@ -307,7 +329,14 @@ export default function SignUp(){
         </Form>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
-            <Button type="submit" className="w-full bg-gray-200 hover:bg-gray-400 text-black mb-4" form="signup">Sign Up</Button>
+            {isError && (
+              <div className="text-sm text-red-500">
+                {error.response?.data.detail?.map((err) => err.msg).join(", ") ?? "Sign Up failed. Please check your credentials."}
+              </div>
+            )}
+            <Button type="submit" className="w-full bg-gray-200 hover:bg-gray-400 text-black mb-4" form="signup" disabled={isPending}>
+            {isPending ? "Creating account..." : "Sign Up"} 
+            </Button>
             <hr className="bg-gray-200 w-full"/>
             <p className="text-gray-200 text-sm">
             Already have an account?{" "}
