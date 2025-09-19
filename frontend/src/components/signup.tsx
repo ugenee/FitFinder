@@ -92,6 +92,30 @@ export default function SignUp(){
         style={{ backgroundImage: `url(${backgroundImage})` }} 
         className="relative w-full min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4 py-8 overflow-y-auto"
         >
+        <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+        {Array.from({ length: 15 }).map((_, i) => {
+          const size = Math.random() * 20 + 10; // px
+          const left = Math.random() * 100; // %
+          const delay = Math.random() * 8; // s
+          const duration = Math.random() * 10 + 5; // s
+          const initialY = -10; // vh, random start above screen
+
+          return (
+            <span
+              key={i}
+              className="absolute text-white"
+              style={{
+                left: `${left}%`,
+                fontSize: `${size}px`,
+                top: `${initialY}vh`,
+                animation: `snowfall ${duration}s linear ${delay}s infinite`,
+              }}
+            >
+              {["❅", "❆"][Math.floor(Math.random() * 2)]}
+            </span>
+          );
+        })}
+      </div>
         
         <motion.div 
         initial={{ opacity: 0, y: -30 }}

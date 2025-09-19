@@ -129,3 +129,22 @@ input:-webkit-autofill {
   /* -webkit-box-shadow: 0 0 0px 1000px black inset !important; keep background black */
   caret-color: white !important; /* makes the | caret visible */
 }
+
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10%) translateX(0);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(50vh) translateX(20px);
+  }
+  100% {
+    transform: translateY(110vh) translateX(-10px);
+    opacity: 0.2;
+  }
+}
+
+.animate-snowfall {
+  animation: snowfall 10s linear infinite;
+}
