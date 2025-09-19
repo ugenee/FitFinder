@@ -20,7 +20,17 @@ export default function LoginPage() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-
+  const [snowflakes] = useState(() =>
+    Array.from({ length: 15 }).map((_, i) => {
+      const size = Math.random() * 20 + 10;
+      const left = Math.random() * 100;
+      const delay = Math.random() * 6;
+      const duration = Math.random() * 10 + 5;
+      const initialY = -20;
+      const symbol = ["❅", "❆"][Math.floor(Math.random() * 2)];
+      return { id: i, size, left, delay, duration, initialY, symbol };
+    })
+  );
   
   const { mutate, isPending, isError, error } = useLoginAuthLoginPost({
     mutation: {
@@ -46,30 +56,23 @@ export default function LoginPage() {
       className="relative w-full min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4 py-6 overflow-y-auto"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
-        {Array.from({ length: 15 }).map((_, i) => {
-          const size = Math.random() * 20 + 10; // px
-          const left = Math.random() * 100; // %
-          const delay = Math.random() * 8; // s
-          const duration = Math.random() * 10 + 5; // s
-          const initialY = -10; // vh, random start above screen
-
-          return (
-            <span
-              key={i}
-              className="absolute text-white"
-              style={{
-                left: `${left}%`,
-                fontSize: `${size}px`,
-                top: `${initialY}vh`,
-                animation: `snowfall ${duration}s linear ${delay}s infinite`,
-              }}
-            >
-              {["❅", "❆"][Math.floor(Math.random() * 2)]}
-            </span>
-          );
-        })}
-      </div>
+    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+    {snowflakes.map((flake) => (
+      <span
+        key={flake.id}
+        className="absolute text-white"
+        style={{
+          left: `${flake.left}%`,
+          fontSize: `${flake.size}px`,
+          top: `${flake.initialY}vh`,
+          animation: `snowfall ${flake.duration}s linear ${flake.delay}s infinite`,
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        {flake.symbol}
+      </span>
+    ))}
+  </div>
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
