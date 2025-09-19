@@ -11,9 +11,10 @@ import backgroundImage from "@/assets/background.jpg"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
+import { useRegisterAuthRegisterPost } from "@/api/endpoints/auth/auth.gen";
+import { Gender , type UserCreate } from "@/api/model";
 
-
-const genderEnum = z.enum(["Male", "Female"]);
+const genderEnum = z.enum(Gender);
 
 
 const formSchema = z.object({
@@ -46,6 +47,30 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function SignUp(){
     const [showPassword, setShowPassword] = useState(false);
+    const [snowflakes] = useState(() =>
+      Array.from({ length: 15 }).map((_, i) => {
+        const size = Math.random() * 20 + 10;
+        const left = Math.random() * 100;
+        const delay = Math.random() * 6;
+        const duration = Math.random() * 10 + 5;
+        const initialY = -20;
+        const symbol = ["❅", "❆"][Math.floor(Math.random() * 2)];
+        return { id: i, size, left, delay, duration, initialY, symbol };
+      })
+    );
+
+    const { mutate: addUser, isPending, isError, error } = useRegisterAuthRegisterPost({
+      mutation: {
+        onSuccess: () => {
+          console.log("Success");
+          navigate("/login");
+        },
+        onError : () => {
+          console.log("Fail");
+        },
+
+      }
+});
     
     const navigate = useNavigate()
     const form = useForm<FormData>({
@@ -61,8 +86,16 @@ export default function SignUp(){
     });
 
     function onSubmit(values: z.infer<typeof formSchema>){
-        console.log(values)
-    }
+      const userData: UserCreate = {
+        user_age: values.age as number,
+        user_email: values.email,
+        user_username: values.username,
+        user_password: values.password,
+        user_gender: values.gender
+      };
+    console.log(userData);
+    addUser({ data: userData });
+  };
 
 
     return (
@@ -70,6 +103,23 @@ export default function SignUp(){
         style={{ backgroundImage: `url(${backgroundImage})` }} 
         className="relative w-full min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4 py-8 overflow-y-auto"
         >
+        <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+        {snowflakes.map((flake) => (
+          <span
+            key={flake.id}
+            className="absolute text-white"
+            style={{
+              left: `${flake.left}%`,
+              fontSize: `${flake.size}px`,
+              top: `${flake.initialY}vh`,
+              animation: `snowfall ${flake.duration}s linear ${flake.delay}s infinite`,
+              fontFamily: "Arial, sans-serif",
+            }}
+          >
+            {flake.symbol}
+          </span>
+        ))}
+      </div>
         
         <motion.div 
         initial={{ opacity: 0, y: -30 }}
@@ -307,7 +357,14 @@ export default function SignUp(){
         </Form>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
-            <Button type="submit" className="w-full bg-gray-200 hover:bg-gray-400 text-black mb-4" form="signup">Sign Up</Button>
+            {isError && (
+              <div className="text-sm text-red-500">
+                {error.response?.data.detail?.map((err) => err.msg).join(", ") ?? "Sign Up failed. Please check your credentials."}
+              </div>
+            )}
+            <Button type="submit" className="w-full bg-gray-200 hover:bg-gray-400 text-black mb-4" form="signup" disabled={isPending}>
+            {isPending ? "Creating account..." : "Sign Up"} 
+            </Button>
             <hr className="bg-gray-200 w-full"/>
             <p className="text-gray-200 text-sm">
             Already have an account?{" "}
