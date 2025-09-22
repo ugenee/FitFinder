@@ -36,7 +36,7 @@ export default function LoginPage() {
     mutation: {
       onSuccess: () => {
         console.log("Logged in");
-        // navigate("/dashboard");
+        navigate("/home");
       },
       onError: () => {
         console.error("Login failed");
@@ -57,22 +57,22 @@ export default function LoginPage() {
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
     <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
-    {snowflakes.map((flake) => (
-      <span
-        key={flake.id}
-        className="absolute text-white"
-        style={{
-          left: `${flake.left}%`,
-          fontSize: `${flake.size}px`,
-          top: `${flake.initialY}vh`,
-          animation: `snowfall ${flake.duration}s linear ${flake.delay}s infinite`,
-          fontFamily: "Arial, sans-serif",
-        }}
-      >
-        {flake.symbol}
-      </span>
-    ))}
-  </div>
+      {snowflakes.map((flake) => (
+        <span
+          key={flake.id}
+          className="absolute text-white"
+          style={{
+            left: `${flake.left}%`,
+            fontSize: `${flake.size}px`,
+            top: `${flake.initialY}vh`,
+            animation: `snowfall ${flake.duration}s linear ${flake.delay}s infinite`,
+            fontFamily: "Arial, sans-serif",
+          }}
+        >
+          {flake.symbol}
+        </span>
+      ))}
+    </div>
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}

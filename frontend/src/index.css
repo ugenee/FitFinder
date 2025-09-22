@@ -117,7 +117,7 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
 }
 
 ::selection {
@@ -129,7 +129,6 @@ input:-webkit-autofill {
   /* -webkit-box-shadow: 0 0 0px 1000px black inset !important; keep background black */
   caret-color: white !important; /* makes the | caret visible */
 }
-
 
 @keyframes snowfall {
   0% {
@@ -147,4 +146,54 @@ input:-webkit-autofill {
 
 .animate-snowfall {
   animation: snowfall 10s linear infinite;
+}
+
+@keyframes cube {
+  0% {
+    transform: scale(0) rotate(0deg) translate(-50%, -50%);
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.1;
+  }
+  100% {
+    transform: scale(20) rotate(960deg) translate(-50%, -50%);
+    opacity: 0;
+  }
+}
+
+.animate-cube {
+  animation: cube 12s ease-in forwards infinite;
+  transform-origin: top left;
+  z-index: 0;
+  /* Add these to prevent sticking */
+  animation-fill-mode: both;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Animation delay utilities */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animation-delay-6000 {
+  animation-delay: 6s;
+}
+
+.animation-delay-8000 {
+  animation-delay: 8s;
+}
+
+.animation-delay-10000 {
+  animation-delay: 10s;
+}
+
+/* Custom gradient for the glow effect */
+.bg-gradient-radial {
+  background-image: radial-gradient(ellipse at center, var(--tw-gradient-stops));
 }
