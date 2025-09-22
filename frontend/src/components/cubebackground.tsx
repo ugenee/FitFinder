@@ -26,12 +26,12 @@ export function CubeBackground({ children, title, className }: CubeBackgroundPro
       <div className="relative z-10 h-full w-full pointer-events-auto">{children}</div>
 
       {/* Cube elements - with darker theme colors */} 
-      <div className="absolute top-[80vh] left-[45vw] w-2.5 h-2.5 border border-slate-400/20 animate-cube"></div>
-      <div className="absolute top-[40vh] left-[25vw] w-2.5 h-2.5 border border-slate-500/25 animate-cube animation-delay-2000"></div>
-      <div className="absolute top-[50vh] left-[75vw] w-2.5 h-2.5 border border-slate-400/20 animate-cube animation-delay-4000"></div>
-      <div className="absolute top-[10vh] left-[90vw] w-2.5 h-2.5 border border-slate-500/25 animate-cube animation-delay-6000"></div>
-      <div className="absolute top-[85vh] left-[10vw] w-2.5 h-2.5 border border-slate-400/20 animate-cube animation-delay-8000"></div>
-      <div className="absolute top-[10vh] left-[50vw] w-2.5 h-2.5 border border-slate-500/25 animate-cube animation-delay-10000"></div>
+      <div className="absolute top-[80vh] left-[45vw] w-2.5 h-2.5 border border-slate-300/20 animate-cube"></div>
+      <div className="absolute top-[40vh] left-[25vw] w-2.5 h-2.5 border border-slate-300/25 animate-cube animation-delay-2000"></div>
+      <div className="absolute top-[50vh] left-[75vw] w-2.5 h-2.5 border border-slate-300/20 animate-cube animation-delay-4000"></div>
+      <div className="absolute top-[10vh] left-[90vw] w-2.5 h-2.5 border border-slate-300/25 animate-cube animation-delay-6000"></div>
+      <div className="absolute top-[85vh] left-[10vw] w-2.5 h-2.5 border border-slate-300/20 animate-cube animation-delay-8000"></div>
+      <div className="absolute top-[10vh] left-[50vw] w-2.5 h-2.5 border border-slate-300/25 animate-cube animation-delay-10000"></div>
     </div>
   );
 }

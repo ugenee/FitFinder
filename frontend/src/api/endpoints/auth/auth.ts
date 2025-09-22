@@ -30,7 +30,7 @@ export const registerAuthRegisterPost = (
   signal?: AbortSignal,
 ) => {
   return customInstance<UserWithToken>({
-    url: `http://localhost:8000/auth/register`,
+    url: `/auth/register`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     data: userCreate,
@@ -144,7 +144,7 @@ export const loginAuthLoginPost = (
   }
 
   return customInstance<unknown>({
-    url: `http://localhost:8000/auth/login`,
+    url: `/auth/login`,
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     data: formUrlEncoded,
@@ -226,7 +226,7 @@ export const useLoginAuthLoginPost = <
  */
 export const logoutAuthLogoutPost = (signal?: AbortSignal) => {
   return customInstance<unknown>({
-    url: `http://localhost:8000/auth/logout`,
+    url: `/auth/logout`,
     method: "POST",
     signal,
   });

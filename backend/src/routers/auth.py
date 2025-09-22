@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Response, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -7,90 +7,68 @@ from core.security import ACCESS_TOKEN_EXPIRES_MINUTES, create_access_token, get
 from db.models import User
 from core.dependencies import get_db
 from schemas.user import UserCreate, UserWithToken
-from schemas.token import Token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-
 
 def set_cookie(response: Response, access_token: str):
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=False,  # set to True if running HTTPS
+        secure=False,  # True in HTTPS
         max_age=ACCESS_TOKEN_EXPIRES_MINUTES * 60,
         samesite="lax",
     )
 
-
-
-@router.post("/register")
-def register(
-    response: Response, user: UserCreate, db: Session = Depends(get_db)
-) -> UserWithToken:
+@router.post("/register", response_model=UserWithToken)
+def register(user: UserCreate, response: Response, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(
         (User.user_email == user.user_email) |
         (User.user_username == user.user_username)
     ).first()
-
     if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username, email, or phone already registered"
-        )
-    
+        raise HTTPException(status_code=400, detail="Username or email already registered")
+
     hashed_password = get_password_hash(user.user_password)
-
     new_user = User(
-        user_username = user.user_username,
-        user_password = hashed_password,
-        user_age =  user.user_age,
-        user_email = user.user_email,
-        user_gender = user.user_gender
+        user_username=user.user_username,
+        user_password=hashed_password,
+        user_email=user.user_email,
+        user_age=user.user_age,
+        user_gender=user.user_gender
     )
-
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
     access_token = create_access_token(
-        data={"sub": new_user.user_username}, expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRES_MINUTES)
+        data={"sub": new_user.user_username},
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRES_MINUTES)
     )
-
     set_cookie(response, access_token)
 
     return UserWithToken(
-        user_id = new_user.user_id,
-        user_username= new_user.user_username,
-        user_email = new_user.user_email,
-        access_token = access_token,
-        token_type = "bearer"
-
+        user_id=new_user.user_id,
+        user_username=new_user.user_username,
+        user_email=new_user.user_email,
+        access_token=access_token,
+        token_type="bearer"
     )
-
 
 @router.post("/login")
-def login(
-    response : Response, 
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
-):
-    user = db.query(User).filter(
-        User.user_username == form_data.username
-    ).first()
-
+def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.user_username == form_data.username).first()
     if not user or not verify_password(form_data.password, user.user_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=[{"msg": "Incorrect username or password"}],
-        )
-    
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
+
     access_token = create_access_token(
-        data={"sub": user.user_email},
-        expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRES_MINUTES)
+        data={"sub": user.user_username},
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRES_MINUTES)
     )
-
     set_cookie(response, access_token)
-
     return {"message": "Login successful"}
 
+@router.post("/logout")
+def logout(response: Response):
+    response.delete_cookie("access_token")
+    return {"message": "Logout successful"}

@@ -1,6 +1,7 @@
 from typing import Union
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from routers import user
 from routers import auth
 from core.config import settings
 from contextlib import asynccontextmanager
@@ -30,3 +31,4 @@ app.add_middleware(
 Base.metadata.create_all(bind=engine)
 
 app.include_router(auth.router)
+app.include_router(user.router)

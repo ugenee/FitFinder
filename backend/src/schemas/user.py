@@ -26,3 +26,14 @@ class UserRead(BaseModel):
 class UserWithToken(UserRead):
     access_token : str
     token_type : str
+
+
+class UserResponse(BaseModel):
+    user_id: int
+    user_age: int
+    user_gender: Gender
+    user_email: EmailStr
+    user_username: str
+
+    class Config:
+        from_attributes = True

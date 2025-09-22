@@ -16,8 +16,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Link } from "react-router-dom"
-
+import { Link, useNavigate } from "react-router-dom"
+import { useLogoutAuthLogoutPost } from "@/api/endpoints/auth/auth.gen";
 // Menu items
 const items = [
   { title: "Home", url: "/home", icon: Home },
@@ -25,6 +25,23 @@ const items = [
 ]
 
 export function AppSidebar() {
+
+  const navigate = useNavigate()
+  const { mutate, isPending } = useLogoutAuthLogoutPost({
+      mutation: {
+        onSuccess: () => {
+          console.log("Logged out");
+          navigate("/login");
+        },
+        onError: () => {
+          console.error("Login failed");
+        },
+      },
+    });
+  const handleLogout = () => {
+    mutate();
+  };
+  
   return (
     <Sidebar collapsible="offcanvas" variant="inset" className="bg-zinc-900/95 backdrop-blur-sm border-r border-zinc-800">
       {/* Main menu */}
@@ -70,8 +87,8 @@ export function AppSidebar() {
                 <DropdownMenuItem className="text-gray-200 hover:bg-zinc-700/60 focus:bg-zinc-700/60 transition-colors">
                   <span>Account</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-gray-200 hover:bg-zinc-700/60 focus:bg-zinc-700/60 transition-colors">
-                  <span>Sign out</span>
+                <DropdownMenuItem className="text-gray-200 hover:bg-zinc-700/60 focus:bg-zinc-700/60 transition-colors" onSelect={handleLogout}>
+                  <span>{isPending ? "Logging out..." : "Sign out"}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

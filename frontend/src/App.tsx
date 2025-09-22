@@ -4,6 +4,8 @@ import SignUp from "./components/signup";
 import Layout from "./components/layout";
 import { HomePage } from "./components/homepage";
 import { AboutPage } from "./components/aboutpage";
+import ProtectedRoute from "./components/protectedroute";
+import PublicRoute from "./components/publicroute";
 
 
 function App() {
@@ -12,16 +14,19 @@ function App() {
       {/* Default redirect */}
       <Route path="/" element={<Navigate to="/login" replace />} />
 
-      {/* Auth pages (no background) */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignUp />} />
+      {/* Public routes (login/signup) */}
+      <Route element={<PublicRoute />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Route>
 
-      {/* All protected pages with layout and background */}
-      <Route path="/*" element={<Layout />}>
-        <Route path="home" element={<HomePage />} />
-        <Route path="about" element={<AboutPage />} />
-
-        {/* Add more nested routes here as needed */}
+      {/* All protected pages */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/*" element={<Layout />}>
+          <Route path="home" element={<HomePage />} />
+          <Route path="about" element={<AboutPage />} />
+          {/* Add more nested routes here */}
+        </Route>
       </Route>
     </Routes>
   );

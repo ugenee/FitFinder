@@ -84,6 +84,84 @@
           }
         }
       }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_auth_logout_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/me": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Read Users Me",
+        "operationId": "read_users_me_user_me_get",
+        "parameters": [
+          {
+            "name": "access_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Access Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication credentials",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Could not validate credentials"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -204,6 +282,39 @@
           "user_age"
         ],
         "title": "UserCreate"
+      },
+      "UserResponse": {
+        "properties": {
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "user_age": {
+            "type": "integer",
+            "title": "User Age"
+          },
+          "user_gender": {
+            "$ref": "#/components/schemas/Gender"
+          },
+          "user_email": {
+            "type": "string",
+            "format": "email",
+            "title": "User Email"
+          },
+          "user_username": {
+            "type": "string",
+            "title": "User Username"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "user_age",
+          "user_gender",
+          "user_email",
+          "user_username"
+        ],
+        "title": "UserResponse"
       },
       "UserWithToken": {
         "properties": {
