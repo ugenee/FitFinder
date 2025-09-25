@@ -1,26 +1,30 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "./appsidebar";
 import { Outlet } from "react-router-dom";
-import { CubeBackground } from "./cubebackground";
+import Navbar from "./ui/navbar";
+import Plasma from "./Plasma";
 
 export default function Layout() {
   return (
-    <>
-      {/* Background - outside sidebar provider to ensure it covers everything */}
-      <CubeBackground className="z-0" />
-      
-      <SidebarProvider>
-        <div className="flex relative min-h-screen z-10">
-          {/* Left sidebar */}
-          <AppSidebar />
+    <div className="relative min-h-screen w-full overflow-hidden bg-black">
+      {/* Plasma background - positioned absolutely */}
+      <div className="fixed inset-0 w-full h-full">
+        <Plasma 
+        speed={0.5}
+        opacity={0.6}
+        scale={1.5}
+        mouseInteractive={false}
+        color="#A2AADB"
+      />
+      </div>
 
-          {/* Main content */}
-          <main className="flex-1 p-4 relative z-20 bg-transparent">
-            <SidebarTrigger className="text-white"/>
-            <Outlet />
-          </main>
+      {/* Content overlay */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <div className="w-full flex justify-center mt-4">
+          <Navbar />
         </div>
-      </SidebarProvider>
-    </>
-  )
+        <main className="flex-1 p-4 mt-20">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
 }

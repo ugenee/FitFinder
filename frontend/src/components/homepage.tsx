@@ -6,8 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils"
-import { useSidebar } from './ui/sidebar';
 
 // Mock data - replace with actual Google Places API data
 const mockGyms = [
@@ -62,7 +60,6 @@ export function HomePage() {
   const [searchRadius, setSearchRadius] = useState("5");
   const [likedGyms, setLikedGyms] = useState(new Set());
   const [isSearching, setIsSearching] = useState(false);
-  const { state, isMobile } = useSidebar()
 
   const handleLocationSearch = () => {
     setIsSearching(true);
@@ -98,10 +95,9 @@ export function HomePage() {
 
   return (
         <div
-  className={cn(
-    "min-h-screen w-full bg-cover bg-center flex items-center justify-center p-4 transition-all",
-    !isMobile && (state === "expanded" ? "ml-30" : "ml-60")
-  )}
+  className=
+    "min-h-screen w-full bg-cover bg-center flex items-center justify-center p-4 transition-all"
+  
 >
 
       <div className="w-full max-w-6xl mx-auto">
