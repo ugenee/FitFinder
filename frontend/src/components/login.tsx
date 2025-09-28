@@ -207,8 +207,8 @@ export default function LoginPage() {
             {isError && (
               <div className="text-sm text-red-500">
                 {error.response?.data.detail?.map((err) => err.msg).join(", ") ?? "Login failed. Please check your credentials."}
-              </div>
-            )}
+              </div> // something wrong
+            )}  
             <Button
               type="submit"
               className="w-full bg-gray-200 text-black hover:bg-gray-400 mb-4 cursor-pointer"
