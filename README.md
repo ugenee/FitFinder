@@ -19,6 +19,10 @@ Future versions will include an **AI-powered custom workout generator** for pers
   - Animated login & signup with spring effects
   - Snowflake background animation
   - Custom input fields with styled placeholder effects
+  - Private and Public routing
+  - UI for the mainpage with fake data
+  - Navbar on the mainpage
+  - Background animations plasma effect
 
 ### 🚧 In Progress
 - **Gym Discovery**
@@ -54,3 +58,5 @@ fastapi dev ./src/main.py
 ### Images of login and signup page
 <img width="1599" height="919" alt="image" src="https://github.com/user-attachments/assets/e63a381a-505a-46ba-a6ce-3762a099ba2e" />
 <img width="1176" height="900" alt="image" src="https://github.com/user-attachments/assets/67b4bc5f-25c9-495b-8d2d-2ec574a481db" />
+<img width="1657" height="990" alt="image" src="https://github.com/user-attachments/assets/edf35ce9-01bf-443e-b33c-7d8ad95d87ad" />
+
