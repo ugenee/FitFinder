@@ -27,7 +27,7 @@ def register(user: UserCreate, response: Response, db: Session = Depends(get_db)
         (User.user_username == user.user_username)
     ).first()
     if existing_user:
-        raise HTTPException(status_code=400, detail="Username or email already registered")
+        raise HTTPException(status_code=400, detail=[{"msg" : "Username or email already registered"}])
 
     hashed_password = get_password_hash(user.user_password)
     new_user = User(
@@ -59,7 +59,7 @@ def register(user: UserCreate, response: Response, db: Session = Depends(get_db)
 def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.user_username == form_data.username).first()
     if not user or not verify_password(form_data.password, user.user_password):
-        raise HTTPException(status_code=401, detail="Incorrect username or password")
+        raise HTTPException(status_code=401, detail=[{"msg": "Incorrect username or password"}])
 
     access_token = create_access_token(
         data={"sub": user.user_username},
