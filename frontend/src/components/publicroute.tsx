@@ -23,7 +23,7 @@ function PublicRoute() {
     checkToken();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return null;
   if (hasToken) return <Navigate to="/home" replace />;
 
   return <Outlet />; // render login/signup if no token

@@ -32,7 +32,7 @@ function ProtectedRoute() {
     fetchCurrentUser();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return null;
   if (error || !user) return <Navigate to="/login" replace />;
 
   return <Outlet />; // render child routes
