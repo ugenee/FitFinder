@@ -29,8 +29,7 @@ const Navbar = () => {
   return (
     <>
       {/* Top Navbar */}
-      <header className="sticky top-4 z-50 flex items-center justify-between px-8 py-3 liquid-glass-header border border-white/10 rounded-full max-w-6xl w-full mx-auto">
-        {/* Left: Logo */}
+      <header className="sticky top-4 z-50 flex items-center justify-between px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full max-w-6xl w-full mx-auto shadow-lg shadow-black/10">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-400 font-bold text-sm">
             FF
