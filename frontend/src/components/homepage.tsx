@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { HeroSection } from './hero';
 
 // Mock data - replace with actual Google Places API data
 const mockGyms = [
@@ -101,12 +102,16 @@ export function HomePage() {
 >
 
       <div className="w-full max-w-6xl mx-auto">
+      <div className='mb-30'>
+        <HeroSection/>
+      </div>
+        
+
         {/* Header */}
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-center" id="search-section">
           <h1 className="text-4xl font-bold text-white mb-2">Find Your Perfect Gym</h1>
           <p className="text-gray-300 text-lg">Discover nearby fitness centers and start your journey</p>
         </div>
-
         {/* Location Search Section */}
         <Card className="mb-8 bg-zinc-800/60 backdrop-blur-sm border-zinc-700/50">
           <CardHeader>
