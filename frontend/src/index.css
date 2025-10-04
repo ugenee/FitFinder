@@ -117,6 +117,15 @@
   body {
     @apply bg-background text-foreground;
   }
+  html {
+    @apply overflow-y-scroll;
+  }
+  /* for Radix Select scroll-lock white bar issue */
+  body[data-scroll-locked] {
+    margin-right: 0 !important;
+    overflow: hidden !important;
+  }
+  
 
 }
 
@@ -127,7 +136,7 @@
 input:-webkit-autofill {
   -webkit-text-fill-color: white !important;
   /* -webkit-box-shadow: 0 0 0px 1000px black inset !important; keep background black */
-  caret-color: white !important; /* makes the | caret visible */
+  caret-color: white !important; 
 }
 
 @keyframes snowfall {
@@ -191,9 +200,4 @@ input:-webkit-autofill {
 
 .animation-delay-10000 {
   animation-delay: 10s;
-}
-
-/* Custom gradient for the glow effect */
-.bg-gradient-radial {
-  background-image: radial-gradient(ellipse at center, var(--tw-gradient-stops));
 }
