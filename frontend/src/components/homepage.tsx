@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { HeroSection } from './hero';
 import { SearchSection } from './search-section';
-import { motion } from "framer-motion";
 
 // Mock data - replace with actual Google Places API data
 const mockGyms = [

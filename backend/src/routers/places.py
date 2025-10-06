@@ -114,6 +114,17 @@ async def search_nearby_gyms(
         # Filter: Only include gyms within Selangor/KL
         if lat and lng and is_within_selangor_kl(lat, lng):
             place_id = place.get("id")
+
+            result = await db.execute(select(Places).where(Places.places_id == place_id))
+            existing_place = result.scalar_one_or_none()
+
+            if not existing_place:
+     
+                new_place = Places(
+                    places_id=place_id,
+                    walk_in=True  # default value
+                )
+                db.add(new_place)
             
             # Get walk-in status from database
             walk_in = await get_place_walk_in_status(db, place_id)
@@ -130,7 +141,7 @@ async def search_nearby_gyms(
                 nationalPhoneNumber=place.get("nationalPhoneNumber"),
                 walk_in=walk_in
             ))
-
+    await db.commit()
     return NearbyGymsResponse(places=places)
 
 
@@ -178,28 +189,3 @@ async def update_gym_walk_in(
         walk_in=place.walk_in
     )
 
-
-@router.get("/gyms/{place_id}/walk-in", response_model=PlaceInDB)
-async def get_gym_walk_in(
-    place_id: str,
-    db: AsyncSession = Depends(get_db)
-):
-    """Get walk-in availability for a specific gym"""
-    result = await db.execute(
-        select(Places).where(Places.places_id == place_id)
-    )
-    place = result.scalar_one_or_none()
-    
-    if not place:
-        # Return default if not in database
-        return PlaceInDB(
-            id=0,
-            places_id=place_id,
-            walk_in=True
-        )
-    
-    return PlaceInDB(
-        id=place.id,
-        places_id=place.places_id,
-        walk_in=place.walk_in
-    )

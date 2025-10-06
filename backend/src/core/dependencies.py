@@ -45,7 +45,7 @@ async def get_current_user(
         if not username:
             raise HTTPException(status_code=401, detail="Invalid token")
         
-        # Use async query with SQLAlchemy 2.0 style
+        # Use async query
         result = await db.execute(
             select(User).where(User.user_username == username)
         )
