@@ -23,14 +23,10 @@ Future versions will include an **AI-powered custom workout generator** for pers
   - UI for the mainpage with fake data
   - Navbar on the mainpage
   - Background animations plasma effect
-
-### 🚧 In Progress
-- **Gym Discovery**
-  - Researching integration with **Places API**
+  - Gym cards with search section
+  - about section
 
 ### 🔮 Planned
-- **Nearby Gym Finder** with filtering & sorting
-- **Detailed Gym Info** (opening hours, membership tiers, facilities, trainers)
 - **AI-Powered Workouts** based on user goals & fitness levels
 
 ---
@@ -41,7 +37,7 @@ Future versions will include an **AI-powered custom workout generator** for pers
 - **Backend:** FastAPI (Python)
 - **Database:** MySQL
 - **Auth:** JWT (stored securely in cookies)
-- **APIs:** Google Places API (planned)
+- **APIs:** Google Places API, Geocode API
 
 ---
 
@@ -58,5 +54,10 @@ fastapi dev ./src/main.py
 ### Images of login and signup page
 <img width="1599" height="919" alt="image" src="https://github.com/user-attachments/assets/e63a381a-505a-46ba-a6ce-3762a099ba2e" />
 <img width="1176" height="900" alt="image" src="https://github.com/user-attachments/assets/67b4bc5f-25c9-495b-8d2d-2ec574a481db" />
-<img width="1657" height="990" alt="image" src="https://github.com/user-attachments/assets/edf35ce9-01bf-443e-b33c-7d8ad95d87ad" />
+<img width="1419" height="931" alt="image" src="https://github.com/user-attachments/assets/1a830491-fb65-4295-9c5f-1d6265dea2f8" />
+<img width="1446" height="970" alt="image" src="https://github.com/user-attachments/assets/344e73f2-a1a8-4f1a-857d-75123b517813" />
+<img width="1392" height="970" alt="image" src="https://github.com/user-attachments/assets/295d2611-340c-4a04-8e61-f3aa66869ed3" />
+
+
+
 
