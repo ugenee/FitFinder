@@ -1,22 +1,33 @@
 import { useState } from "react";
 import { Menu, X, LogOut, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useLogoutAuthLogoutPost } from "@/api/endpoints/auth/auth.gen";
+import { useMutation } from "@tanstack/react-query";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate()
-  const { mutate, isPending } = useLogoutAuthLogoutPost({
-      mutation: {
-        onSuccess: () => {
-          console.log("Logged out");
-          navigate("/login");
-        },
-        onError: () => {
-          console.error("Login failed");
-        },
-      },
+  async function logoutPost(){
+    const response = await fetch("http://localhost:8000/auth/logout", {
+      method: "POST",
+      credentials: "include"
     });
+    if (!response.ok) {
+      throw new Error("Logout Failed")
+    }
+
+    return response.json();
+
+  }
+  const {mutate, isPending} = useMutation({
+    mutationFn: logoutPost,
+    onSuccess: () => {
+      navigate("/login");
+    },
+    onError: () => {
+      console.log("Logout Failed")
+    }
+  })
+
   const handleLogout = () => {
     mutate();
   };
