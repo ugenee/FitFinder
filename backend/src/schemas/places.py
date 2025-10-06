@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
 # Request Schemas
 class NearbyGymsRequest(BaseModel):
@@ -25,6 +25,7 @@ class PlaceResponse(BaseModel):
     googleMapsUri: Optional[str] = None
     websiteUri: Optional[str] = None
     nationalPhoneNumber: Optional[str] = None
+    photos: Optional[List[str]] = None
     walk_in: bool = Field(default=True, description="Walk-in availability (from database)")
 
 class NearbyGymsResponse(BaseModel):

@@ -86,7 +86,8 @@ async def search_nearby_gyms(
             "places.userRatingCount,"
             "places.googleMapsUri,"
             "places.websiteUri,"
-            "places.nationalPhoneNumber"
+            "places.photos,"
+            "places.nationalPhoneNumber,"
         ),
     }
 
@@ -128,6 +129,12 @@ async def search_nearby_gyms(
             
             # Get walk-in status from database
             walk_in = await get_place_walk_in_status(db, place_id)
+            photos = []
+            for photo in place.get("photos", []):
+                name = photo.get("name")  # e.g. "places/ChIJN1t_tDeuEmsRUsoyG83frY4/photos/0"
+                if name:
+                    photo_url = f"https://places.googleapis.com/v1/{name}/media?maxWidthPx=400&key={settings.GOOGLE_PLACES_API_KEY}"
+                    photos.append(photo_url)
             
             places.append(PlaceResponse(
                 id=place_id,
@@ -139,6 +146,7 @@ async def search_nearby_gyms(
                 googleMapsUri=place.get("googleMapsUri"),
                 websiteUri=place.get("websiteUri"),
                 nationalPhoneNumber=place.get("nationalPhoneNumber"),
+                photos=photos,
                 walk_in=walk_in
             ))
     await db.commit()
