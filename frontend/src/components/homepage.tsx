@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { HeroSection } from "./hero";
 import { SearchSection } from "./search-section";
 import NearbyGyms from "./gym-cards";
+import AboutSection from "./about-page";
 
 interface Place {
   displayName: string;
@@ -32,6 +33,7 @@ export default function HomePage() {
       <div className="w-full max-w-6xl mx-auto space-y-12">
         {/* Hero Section */}
         <motion.div
+          id="hero-section"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -42,6 +44,7 @@ export default function HomePage() {
 
         {/* Header */}
         <motion.div
+          id="search-section"
           className="text-center"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -58,7 +61,6 @@ export default function HomePage() {
 
         {/* Search Section */}
         <motion.div
-          id="search-section"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -89,6 +91,9 @@ export default function HomePage() {
         >
           <NearbyGyms places={places} />
         </motion.div>
+        <div className="mt-100">
+        <AboutSection />
+        </div>
       </div>
     </div>
   );

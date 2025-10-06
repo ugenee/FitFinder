@@ -3,7 +3,6 @@ import LoginPage from "./components/login";
 import SignUp from "./components/signup";
 import Layout from "./components/layout";
 import  HomePage  from "./components/homepage";
-import { AboutPage } from "./components/aboutpage";
 import ProtectedRoute from "./components/protectedroute";
 import PublicRoute from "./components/publicroute";
 
@@ -24,7 +23,6 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/*" element={<Layout />}>
           <Route path="home" element={<HomePage />} />
-          <Route path="about" element={<AboutPage />} />
           {/* Add more nested routes here */}
         </Route>
       </Route>

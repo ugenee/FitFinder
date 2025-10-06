@@ -37,6 +37,26 @@ const Navbar = () => {
     // Add your profile navigation logic here
   };
 
+  const handleScrollHero = () => {
+    const element = document.getElementById("hero-section");
+    if (element) {
+        const yOffset = -100;
+        const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+        window.scrollTo({ top: y, behavior: "smooth" });
+    }
+    };
+
+    const handleScrollAbout = () => {
+    const element = document.getElementById("about-section");
+    if (element) {
+      const yOffset = -80; // Reduced for mobile
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
   return (
     <>
       {/* Top Navbar */}
@@ -48,12 +68,11 @@ const Navbar = () => {
           <span className="font-semibold text-white">FitFinder</span>
         </div>
 
-        {/* Middle: Nav Links (Desktop only) */}
         <nav className="hidden md:flex gap-8 text-sm font-medium text-white/70">
-          <a href="/home" className="hover:text-white transition-colors">
+          <a className="hover:text-white transition-colors cursor-pointer" onClick={handleScrollHero}>
             Home
           </a>
-          <a href="/about" className="hover:text-white transition-colors">
+          <a className="hover:text-white transition-colors cursor-pointer" onClick={handleScrollAbout}>
             About
           </a>
         </nav>
@@ -115,16 +134,20 @@ const Navbar = () => {
           {/* Sidebar links */}
           <nav className="mt-16 flex flex-col gap-6 text-white/80 text-lg px-6">
             <a
-              href="/home"
               className="hover:text-white transition-colors"
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false);
+                handleScrollHero();
+              }}
             >
               Home
             </a>
             <a
-              href="/about"
               className="hover:text-white transition-colors"
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false);
+                handleScrollAbout();
+              }}
             >
               About
             </a>
