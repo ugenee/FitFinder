@@ -59,6 +59,7 @@ async def register(
         user_email=user.user_email,
         user_age=user.user_age,
         user_gender=user.user_gender,
+        user_role = user.user_role
     )
 
     db.add(new_user)

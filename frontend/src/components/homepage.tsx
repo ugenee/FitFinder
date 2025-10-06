@@ -4,6 +4,7 @@ import { HeroSection } from "./hero";
 import { SearchSection } from "./search-section";
 import NearbyGyms from "./gym-cards";
 import AboutSection from "./about-page";
+import { useUser } from "./user-context";
 
 interface Place {
   displayName: string;
@@ -15,6 +16,7 @@ interface Place {
   nationalPhoneNumber?: string;
   photos?: string[];
   walk_in: boolean;
+  places_id?: string;
 }
 
 const mockPlaces: Place[] = [
@@ -23,6 +25,7 @@ const mockPlaces: Place[] = [
 
 export default function HomePage() {
   const [places, setPlaces] = useState<Place[]>(mockPlaces);
+  const { isAdmin } = useUser(); // Get admin status from context
 
   const handleGymsFetched = (gyms: Place[]) => {
     setPlaces(gyms);
@@ -31,6 +34,19 @@ export default function HomePage() {
   return (
     <div className="min-h-screen w-full bg-cover bg-center flex items-center justify-center p-4 transition-all">
       <div className="w-full max-w-6xl mx-auto space-y-12">
+        {/* Admin badge */}
+        {isAdmin && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4"
+          >
+            <div className="bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center gap-2">
+              <span>🔧</span>
+              Admin Mode - You can edit walk-in status
+            </div>
+          </motion.div>
+        )}
         {/* Hero Section */}
         <motion.div
           id="hero-section"
@@ -89,7 +105,7 @@ export default function HomePage() {
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
           viewport={{ once: true, amount: 0.3 }}
         >
-          <NearbyGyms places={places} />
+          <NearbyGyms places={places} isAdmin={isAdmin} />
         </motion.div>
         <div className="mt-100">
         <AboutSection />

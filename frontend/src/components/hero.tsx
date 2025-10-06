@@ -5,7 +5,7 @@ export function HeroSection() {
   const handleScroll = () => {
     const element = document.getElementById("search-section");
     if (element) {
-        const yOffset = -100;
+        const yOffset = -120;
         const y =
         element.getBoundingClientRect().top + window.pageYOffset + yOffset;
 

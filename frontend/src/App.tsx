@@ -5,10 +5,12 @@ import Layout from "./components/layout";
 import  HomePage  from "./components/homepage";
 import ProtectedRoute from "./components/protectedroute";
 import PublicRoute from "./components/publicroute";
+import { UserProvider } from "./components/user-context";
 
 
 function App() {
   return (
+    <UserProvider>
     <Routes>
       {/* Default redirect */}
       <Route path="/" element={<Navigate to="/login" replace />} />
@@ -26,7 +28,9 @@ function App() {
           {/* Add more nested routes here */}
         </Route>
       </Route>
+      <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
+    </UserProvider>
   );
 }
 

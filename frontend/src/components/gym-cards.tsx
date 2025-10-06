@@ -1,8 +1,9 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { MapPin, Phone, Star, Globe, Image as ImageIcon, ChevronLeft, ChevronRight } from "lucide-react"
+import { MapPin, Phone, Star, Globe, Image as ImageIcon, ChevronLeft, ChevronRight, Edit, Check, X } from "lucide-react"
 import { useState } from "react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 interface Place {
   displayName: string
@@ -14,11 +15,112 @@ interface Place {
   nationalPhoneNumber?: string
   photos?: string[]
   walk_in: boolean
+  id?: string
 }
 
 interface NearbyGymsProps {
   places: Place[]
+  isAdmin?: boolean
 }
+
+// API call to update walk-in status with debugging
+const updateWalkInStatus = async (placeId: string, walkIn: boolean) => {
+  console.log("Making API call to update walk-in:", { placeId, walkIn });
+  
+  const response = await fetch(`http://localhost:8000/places/gyms/${placeId}/walk-in`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({ walk_in: walkIn })
+  });
+  
+  console.log("API response status:", response.status);
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("API error:", errorText);
+    throw new Error(`Failed to update walk-in status: ${response.status} ${errorText}`);
+  }
+  
+  const result = await response.json();
+  console.log("API success:", result);
+  return result;
+};
+
+// Admin toggle component
+const AdminWalkInToggle = ({ place, onUpdate }: { place: Place; onUpdate: (walkIn: boolean) => void }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempWalkIn, setTempWalkIn] = useState(place.walk_in);
+  
+  console.log("AdminWalkInToggle rendering for:", place.displayName, "isEditing:", isEditing, "places_id:", place.id);
+  
+  const handleSave = () => {
+    console.log("Saving walk-in status:", tempWalkIn, "for:", place.displayName, "places_id:", place.id);
+    onUpdate(tempWalkIn);
+    setIsEditing(false);
+  };
+  
+  const handleCancel = () => {
+    console.log("Canceling edit for:", place.displayName);
+    setTempWalkIn(place.walk_in);
+    setIsEditing(false);
+  };
+
+  if (!isEditing) {
+    return (
+      <div className="flex items-center justify-between">
+        <span
+          className={`px-2 py-1 text-xs font-medium rounded-full ${
+            place.walk_in
+              ? "bg-green-500/20 text-green-400 border border-green-400/30"
+              : "bg-red-500/20 text-red-400 border border-red-400/30"
+          }`}
+        >
+          {place.walk_in ? "Walk-in Available" : "Walk-in Not Available"}
+        </span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsEditing(true)}
+          className="p-1 h-6 w-6 text-gray-400 hover:text-blue-400"
+        >
+          <Edit className="w-3 h-3" />
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <select
+        value={tempWalkIn.toString()}
+        onChange={(e) => setTempWalkIn(e.target.value === 'true')}
+        className="w-full bg-black/30 border border-white/20 rounded-md px-2 py-1 text-white text-sm"
+      >
+        <option value="true">Walk-in Available</option>
+        <option value="false">Walk-in Not Available</option>
+      </select>
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          onClick={handleSave}
+          className="bg-green-600 hover:bg-green-700 text-white p-1 h-6 flex-1"
+        >
+          <Check className="w-3 h-3" />
+        </Button>
+        <Button
+          size="sm"
+          onClick={handleCancel}
+          className="bg-red-600 hover:bg-red-700 text-white p-1 h-6 flex-1"
+        >
+          <X className="w-3 h-3" />
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 // Fallback image component
 const FallbackImage = ({ gymName }: { gymName: string }) => (
@@ -163,7 +265,43 @@ const RatingFallback = () => (
   </div>
 )
 
-export default function NearbyGyms({ places }: NearbyGymsProps) {
+export default function NearbyGyms({ places, isAdmin = false }: NearbyGymsProps) {
+  const queryClient = useQueryClient();
+  const updateMutation = useMutation({
+    mutationFn: ({ placeId, walkIn }: { placeId: string; walkIn: boolean }) => 
+      updateWalkInStatus(placeId, walkIn),
+    onSuccess: (data) => {
+      console.log("Mutation successful:", data);
+      // Invalidate and refetch gyms data
+      queryClient.invalidateQueries({ queryKey: ['nearbyGyms'] });
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
+      alert('Failed to update walk-in status: ' + error.message);
+    },
+    onMutate: (variables) => {
+      console.log("Mutation started:", variables);
+    }
+  });
+
+  const handleWalkInUpdate = (placeId: string, walkIn: boolean) => {
+    console.log("handleWalkInUpdate called:", { 
+      placeId, 
+      walkIn, 
+      hasPlacesId: !!placeId,
+      allPlaces: places.map(p => ({ name: p.displayName, id: p.id }))
+    });
+    
+    // Make sure we have a valid placeId
+    if (!placeId) {
+      console.error("No placeId provided");
+      alert("Cannot update: Missing gym identifier");
+      return;
+    }
+    
+    updateMutation.mutate({ placeId, walkIn });
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
       {places.map((place, index) => (
@@ -236,17 +374,31 @@ export default function NearbyGyms({ places }: NearbyGymsProps) {
                 <WebsiteFallback />
               )}
 
-              {/* Walk-in availability */}
+              {/* Walk-in availability with admin controls */}
+              
               <div>
-                <span
-                  className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    place.walk_in
-                      ? "bg-green-500/20 text-green-400 border border-green-400/30"
-                      : "bg-red-500/20 text-red-400 border border-red-400/30"
-                  }`}
-                >
-                  {place.walk_in ? "Walk-in Available" : "Appointment Only"}
-                </span>
+                {isAdmin ? (
+                  <AdminWalkInToggle 
+                    place={place} 
+                    onUpdate={(walkIn) => {
+                      console.log("onUpdate called for:", place.displayName, "with walkIn:", walkIn);
+                      // Use places_id if available, otherwise fallback to displayName
+                      const idToUse = place.id || place.displayName;
+                      console.log("Using ID:", idToUse);
+                      handleWalkInUpdate(idToUse, walkIn);
+                    }}
+                  />
+                ) : (
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      place.walk_in
+                        ? "bg-green-500/20 text-green-400 border border-green-400/30"
+                        : "bg-red-500/20 text-red-400 border border-red-400/30"
+                    }`}
+                  >
+                    {place.walk_in ? "Walk-in Available" : "Walk-in Not Available"}
+                  </span>
+                )}
               </div>
 
               {/* Google Maps link */}

@@ -3,8 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 import httpx
 import certifi
-from core.dependencies import get_db
-from db.models import Places
+from core.dependencies import get_current_admin_user, get_db
+from db.models import Places, User
 from core.config import settings
 
 from schemas.places import (
@@ -63,7 +63,7 @@ async def search_nearby_gyms(
     url = "https://places.googleapis.com/v1/places:searchNearby"
 
     payload = {
-        "includedTypes": ["gym"],
+        "includedTypes": ["gym", "fitness_center"],
         "maxResultCount": 20,
         "locationRestriction": {
             "circle": {
@@ -107,12 +107,17 @@ async def search_nearby_gyms(
 
     data = response.json()
     places = []
+    excluded_keywords = ["hotel", "resort", "park", "field", "playground", "garden"]
 
     # Filter and process results
     for place in data.get("places", []):
         location = place.get("location", {})
         lat = location.get("latitude")
         lng = location.get("longitude")
+        name = place.get("displayName", {}).get("text", "").lower()
+
+        if any(word in name for word in excluded_keywords):
+            continue
         
         # Filter: Only include gyms within Selangor/KL
         if lat and lng and is_within_selangor_kl(lat, lng):
@@ -171,11 +176,11 @@ async def search_nearby_gyms_get(
 async def update_gym_walk_in(
     place_id: str,
     request: UpdateWalkInRequest,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user)
 ):
     """
-    Update walk-in availability for a specific gym
-    Creates a new record if the gym doesn't exist in the database
+    Update walk-in availability for a specific gym (Admin only)
     """
     result = await db.execute(
         select(Places).where(Places.places_id == place_id)
@@ -183,10 +188,8 @@ async def update_gym_walk_in(
     place = result.scalar_one_or_none()
     
     if place:
-        # Update existing record
         place.walk_in = request.walk_in
     else:
-        # Create new record
         place = Places(places_id=place_id, walk_in=request.walk_in)
         db.add(place)
     

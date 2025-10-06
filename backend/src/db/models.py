@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Enum, Integer, String
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 from sqlalchemy.dialects.mysql import TINYINT
 
-from schemas.user import Gender
+from schemas.user import Gender, UserRole
 
 Base = declarative_base()
 
@@ -20,6 +20,10 @@ class User(Base):
     user_username: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=False)
     user_password: Mapped[str] = mapped_column(String(150), nullable=False)
+
+    user_role: Mapped[UserRole] = mapped_column(
+        Enum(UserRole), default=UserRole.USER, nullable=False)
+
    
 class Places(Base):
     __tablename__ = "t_places"
