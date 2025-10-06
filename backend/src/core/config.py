@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     MAIL_PORT: int = Field(default=...)
     MAIL_SERVER: str = Field(default=...)
     MAIL_FROM_NAME: str = Field(default=...)
+    GOOGLE_PLACES_API_KEY: str = Field(default=...)
 
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
@@ -27,7 +28,7 @@ class Settings(BaseSettings):
 
     @field_validator('DATABASE_URL')
     def validate_db_url(cls, v):
-        if not v.startswith(("mysql+pymysql://")):
+        if not v.startswith(("mysql+aiomysql://")):
             raise ValueError("Invalid MySQL database URL format")
         return v
 

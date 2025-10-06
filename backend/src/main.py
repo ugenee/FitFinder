@@ -1,8 +1,7 @@
 from typing import Union
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import user
-from routers import auth
+from routers import places, user, auth
 from core.config import settings
 from contextlib import asynccontextmanager
 from db.models import Base
@@ -16,7 +15,11 @@ async def lifespan(app: FastAPI):
     if not settings.DATABASE_URL:
         raise RuntimeError("DATABASE_URL must be set in environment")
     
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
     yield
+
 app = FastAPI(lifespan=lifespan)
 origins = ["http://localhost:5173", "http://localhost:8000"]
 
@@ -28,7 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-Base.metadata.create_all(bind=engine)
-
+# ✅ Include routers
 app.include_router(auth.router)
 app.include_router(user.router)
+app.include_router(places.router)

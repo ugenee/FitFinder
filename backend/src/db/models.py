@@ -1,4 +1,4 @@
-from sqlalchemy import Enum, Integer, String
+from sqlalchemy import Boolean, Enum, Integer, String
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 from sqlalchemy.dialects.mysql import TINYINT
 
@@ -21,3 +21,14 @@ class User(Base):
         String(50), unique=True, nullable=False)
     user_password: Mapped[str] = mapped_column(String(150), nullable=False)
    
+class Places(Base):
+    __tablename__ = "t_places"
+    id : Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True
+    )
+    places_id : Mapped[str] = mapped_column(
+        String(50), unique=True, nullable=False
+    )
+    walk_in : Mapped[bool] = mapped_column(
+        Boolean, default=True, nullable=False
+    )
