@@ -16,6 +16,8 @@ function PublicRoute() {
     queryKey: ["currentUser"],
     queryFn: fetchCurrentUser,
     retry: false, // stop retrying if not authenticated
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   if (isLoading) return null;
