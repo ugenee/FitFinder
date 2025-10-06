@@ -11,8 +11,8 @@ import backgroundImage from "@/assets/background.jpg"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
-import { useRegisterAuthRegisterPost } from "@/api/endpoints/auth/auth.gen";
 import { Gender , type UserCreate } from "@/api/model";
+import { useMutation } from "@tanstack/react-query";
 
 const genderEnum = z.enum(Gender);
 
@@ -59,18 +59,37 @@ export default function SignUp(){
       })
     );
 
-    const { mutate: addUser, isPending, isError, error } = useRegisterAuthRegisterPost({
-      mutation: {
-        onSuccess: () => {
-          console.log("Success");
-          navigate("/login");
+    async function registerPost({ userData }: { userData: UserCreate }) {
+      const response = await fetch("http://localhost:8000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        onError : () => {
-          console.log("Fail");
-        },
+        credentials: "include",
+        body: JSON.stringify(userData),
+      });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData?.detail?.[0]?.msg || "Registration failed. Please try again."
+        );
       }
-});
+
+      return response.json();
+    }
+
+
+    const { mutate: addUser, isPending, isError, error } = useMutation({
+      mutationFn: registerPost,
+      onSuccess: (data) => {
+        console.log("Registration successful:", data);
+        navigate("/login")
+      },
+      onError: (err) => {
+        console.error("Error:", err);
+      },
+    });
     
     const navigate = useNavigate()
     const form = useForm<FormData>({
@@ -93,9 +112,9 @@ export default function SignUp(){
         user_password: values.password,
         user_gender: values.gender
       };
-    console.log(userData);
-    addUser({ data: userData });
-  };
+      console.log(userData);
+      addUser({ userData });
+    };
 
 
     return (
@@ -359,7 +378,7 @@ export default function SignUp(){
         <CardFooter className="flex flex-col gap-2">
             {isError && (
               <div className="text-sm text-red-500">
-                {error.response?.data.detail?.map((err) => err.msg).join(", ") ?? "Sign Up failed. Please check your credentials."}
+                {error?.message || "Sign Up failed. Please check your credentials."}
               </div>
             )}
             <Button type="submit" className="w-full bg-gray-200 hover:bg-gray-400 text-black mb-4" form="signup" disabled={isPending}>

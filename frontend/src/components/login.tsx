@@ -14,7 +14,7 @@ import backgroundImage from "@/assets/background.jpg"
 import { Eye, EyeOff } from "lucide-react"
 import { Label } from "./ui/label"
 import { useNavigate } from "react-router-dom"
-import { useLoginAuthLoginPost } from "@/api/endpoints/auth/auth.gen";
+import { useMutation } from "@tanstack/react-query"
 
 export default function LoginPage() {
   const [username, setUsername] = useState("")
@@ -32,21 +32,42 @@ export default function LoginPage() {
     })
   );
   
-  const { mutate, isPending, isError, error } = useLoginAuthLoginPost({
-    mutation: {
-      onSuccess: () => {
-        console.log("Logged in");
-        navigate("/home");
+  async function loginPost({ username, password }: { username: string; password: string }) {
+    const formData = new URLSearchParams();
+    formData.append("username", username);
+    formData.append("password", password);
+
+    const response = await fetch("http://localhost:8000/auth/login", {
+      method: "POST",
+      body: formData, // FastAPI expects form-encoded data for OAuth2PasswordRequestForm
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      onError: () => {
-        console.error("Login failed");
-      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail?.[0]?.msg ?? "Login failed");
+    }
+
+    return response.json();
+  }
+
+  const { mutate, isPending, isError, error} = useMutation({
+    mutationFn: loginPost,
+    onSuccess: () => {
+      navigate("/home");
+    },
+    onError: (error: Error) => {
+      console.error("Login failed:", error.message);
     },
   });
 
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    mutate({data : {username: username.trim(), password: password.trim()}});
+    mutate({username, password});
   };
   
   const navigate = useNavigate()
@@ -205,9 +226,9 @@ export default function LoginPage() {
           
           <CardFooter className="flex-col gap-2">
             {isError && (
-              <div className="text-sm text-red-500">
-                {error.response?.data.detail?.map((err) => err.msg).join(", ") ?? "Login failed. Please check your credentials."}
-              </div> // something wrong
+            <div className="text-sm text-red-500">
+              {error?.message || "Login failed. Please check your credentials."}
+              </div>
             )}  
             <Button
               type="submit"
