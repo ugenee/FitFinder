@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./components/login";
 import SignUp from "./components/signup";
 import Layout from "./components/layout";
-import { HomePage } from "./components/homepage";
+import  HomePage  from "./components/homepage";
 import { AboutPage } from "./components/aboutpage";
 import ProtectedRoute from "./components/protectedroute";
 import PublicRoute from "./components/publicroute";

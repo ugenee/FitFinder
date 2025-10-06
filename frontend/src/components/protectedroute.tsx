@@ -1,39 +1,24 @@
 import { Navigate, Outlet } from "react-router-dom";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-interface User {
-  user_id: number;
-  user_age: number;
-  user_gender: string;
-  user_email: string;
-  user_username: string;
+async function fetchCurrentUser() {
+  const response = await fetch("http://localhost:8000/user/me", {
+    method: "GET",
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Not Authenticated");
+  return response.json();
 }
 
 function ProtectedRoute() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const res = await axios.get<User>("http://localhost:8000/user/me", {
-          withCredentials: true, // ✅ include cookies
-        });
-        setUser(res.data);
-      } catch (err) {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCurrentUser();
-  }, []);
-
-  if (loading) return null;
-  if (error || !user) return <Navigate to="/login" replace />;
+  const {data: user, isLoading, isError} = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: fetchCurrentUser,
+    retry: false,
+  });
+  
+  if (isLoading) return null;
+  if (isError || !user) return <Navigate to="/login" replace />;
 
   return <Outlet />; // render child routes
 }

@@ -1,30 +1,25 @@
 import { Navigate, Outlet } from "react-router-dom";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+async function fetchCurrentUser() {
+  const response = await fetch("http://localhost:8000/user/me", {
+    method: "GET",
+    credentials: "include", // cookies
+  });
+  if (!response.ok) throw new Error("Not Authenticated");
+  return response.json();
+}
+
 
 function PublicRoute() {
-  const [loading, setLoading] = useState(true);
-  const [hasToken, setHasToken] = useState(false);
+  const {data: user, isLoading, isError} = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: fetchCurrentUser,
+    retry: false, // stop retrying if not authenticated
+  });
 
-  useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const res = await axios.get("http://localhost:8000/user/me", {
-          withCredentials: true, // send cookie
-        });
-        if (res.data) setHasToken(true);
-      } catch (err) {
-        setHasToken(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkToken();
-  }, []);
-
-  if (loading) return null;
-  if (hasToken) return <Navigate to="/home" replace />;
+  if (isLoading) return null;
+  if (user && !isError) return <Navigate to="/home" replace />;
 
   return <Outlet />; // render login/signup if no token
 }
