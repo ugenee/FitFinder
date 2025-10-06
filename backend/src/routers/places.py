@@ -15,7 +15,9 @@ from schemas.places import (
     UpdateWalkInRequest,
     PlaceInDB
 )
-
+import urllib.parse
+import httpx
+import certifi
 router = APIRouter(prefix="/places", tags=["Places"])
 
 # Selangor and KL boundaries (approximate)
@@ -197,3 +199,40 @@ async def update_gym_walk_in(
         walk_in=place.walk_in
     )
 
+
+@router.get("/geocode")
+async def geocode_location(address: str):
+    """Convert address into lat/lng using Google Geocoding API"""
+    encoded_address = urllib.parse.quote(address)
+    url = f"https://maps.googleapis.com/maps/api/geocode/json?address={encoded_address}&key={settings.GOOGLE_PLACES_API_KEY}"
+
+    try:
+        async with httpx.AsyncClient(verify=certifi.where()) as client:
+            response = await client.get(url)
+            data = response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Request error: {e}")
+
+    if data["status"] != "OK":
+        raise HTTPException(status_code=400, detail=f"Failed to geocode address: {data.get('status')}")
+
+    location = data["results"][0]["geometry"]["location"]
+    return {"lat": location["lat"], "lng": location["lng"]}
+
+@router.get("/autocomplete")
+async def autocomplete_locations(input: str):
+    """Get location suggestions using Google Places Autocomplete"""
+    encoded_input = urllib.parse.quote(input)
+    url = f"https://maps.googleapis.com/maps/api/place/autocomplete/json?input={encoded_input}&key={settings.GOOGLE_PLACES_API_KEY}"
+
+    async with httpx.AsyncClient(verify=certifi.where()) as client:
+        response = await client.get(url)
+        data = response.json()
+
+    if data["status"] not in ["OK", "ZERO_RESULTS"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Failed to fetch suggestions: {data.get('status')}"
+        )
+
+    return {"predictions": data.get("predictions", [])}
