@@ -25,7 +25,7 @@ def set_cookie(response: Response, access_token: str):
         httponly=True,
         secure=True,  # Change to True in HTTPS
         max_age=ACCESS_TOKEN_EXPIRES_MINUTES * 60,
-        samesite="lax",
+        samesite="none",
         path="/",
     )
 
@@ -120,7 +120,7 @@ async def logout(response: Response):
         key="access_token",
         httponly=True,
         secure=True,
-        samesite="lax",
+        samesite="none",
         path="/",
     )
     return {"message": "Logout successful"}
