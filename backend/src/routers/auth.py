@@ -79,6 +79,7 @@ async def register(
         user_username=new_user.user_username,
         user_email=new_user.user_email,
         access_token=access_token,
+        user_role=new_user.user_role,
         token_type="bearer",
     )
 
