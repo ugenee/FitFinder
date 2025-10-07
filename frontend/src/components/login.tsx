@@ -37,7 +37,7 @@ export default function LoginPage() {
     formData.append("username", username);
     formData.append("password", password);
 
-    const response = await fetch("http://localhost:8000/auth/login", {
+    const response = await fetch("https://fitfinder-backend-l8ma.onrender.com/auth/login", {
       method: "POST",
       body: formData, // FastAPI expects form-encoded data for OAuth2PasswordRequestForm
       credentials: "include",

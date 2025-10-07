@@ -17,7 +17,7 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 async function fetchCurrentUser(): Promise<User> {
-  const response = await fetch("http://localhost:8000/user/me", {
+  const response = await fetch("https://fitfinder-backend-l8ma.onrender.com/user/me", {
     method: "GET",
     credentials: "include",
   });

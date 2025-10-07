@@ -55,7 +55,7 @@ export default function SignUp(){
     );
 
     async function registerPost({ userData }: { userData: UserCreate }) {
-      const response = await fetch("http://localhost:8000/auth/register", {
+      const response = await fetch("https://fitfinder-backend-l8ma.onrender.com/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

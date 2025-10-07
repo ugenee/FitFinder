@@ -37,7 +37,7 @@ interface GeocodeSuggestion {
   };
 }
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://fitfinder-backend-l8ma.onrender.com";
 
 const fetchNearbyGyms = async (
   lat: number,

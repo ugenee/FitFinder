@@ -27,7 +27,7 @@ interface NearbyGymsProps {
 const updateWalkInStatus = async (placeId: string, walkIn: boolean) => {
   console.log("Making API call to update walk-in:", { placeId, walkIn });
   
-  const response = await fetch(`http://localhost:8000/places/gyms/${placeId}/walk-in`, {
+  const response = await fetch(`https://fitfinder-backend-l8ma.onrender.com/places/gyms/${placeId}/walk-in`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
