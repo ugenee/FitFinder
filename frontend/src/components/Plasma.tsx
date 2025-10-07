@@ -118,12 +118,15 @@ export const Plasma: React.FC<PlasmaProps> = ({
     const customColorRgb = color ? hexToRgb(color) : [1, 1, 1];
     const directionMultiplier = direction === 'reverse' ? -1.0 : 1.0;
 
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
+
     try {
       const renderer = new Renderer({
         webgl: 2,
         alpha: true,
         antialias: false,
-        dpr: Math.min(window.devicePixelRatio || 1, 2),
+        dpr: dpr,
         preserveDrawingBuffer: true, // Add this
         powerPreference: 'high-performance' // Add this
         
