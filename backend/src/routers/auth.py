@@ -27,6 +27,7 @@ def set_cookie(response: Response, access_token: str):
         max_age=ACCESS_TOKEN_EXPIRES_MINUTES * 60,
         samesite="none",
         path="/",
+        partitioned=True
     )
 
 
