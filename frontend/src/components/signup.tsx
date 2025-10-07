@@ -42,7 +42,6 @@ const formSchema = z.object({
   gender: genderEnum
 });
 
-type FormData = z.infer<typeof formSchema>;
 
 
 export default function SignUp(){
@@ -92,28 +91,27 @@ export default function SignUp(){
     });
     
     const navigate = useNavigate()
-    const form = useForm<FormData>({
+    const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: "",
             username: "",
             password: "",
-            age: undefined,
-            gender: undefined,
-    
+            age: undefined as number | undefined,
+            gender: undefined as "Male" | "Female" | undefined,
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>){
-      const userData: UserCreate = {
-        user_age: values.age as number,
-        user_email: values.email,
-        user_username: values.username,
-        user_password: values.password,
-        user_gender: values.gender
-      };
-      console.log(userData);
-      addUser({ userData });
+    function onSubmit(values: any){
+        const userData: UserCreate = {
+            user_age: values.age as number,
+            user_email: values.email,
+            user_username: values.username,
+            user_password: values.password,
+            user_gender: values.gender
+        };
+        console.log(userData);
+        addUser({ userData });
     };
 
 
