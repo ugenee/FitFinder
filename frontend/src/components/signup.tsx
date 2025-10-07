@@ -42,7 +42,7 @@ const formSchema = z.object({
   gender: genderEnum
 });
 
-
+type FormData = z.infer<typeof formSchema>;
 
 export default function SignUp(){
     const [showPassword, setShowPassword] = useState(false);
@@ -102,17 +102,17 @@ export default function SignUp(){
         },
     });
 
-    function onSubmit(values: any){
-        const userData: UserCreate = {
-            user_age: values.age as number,
-            user_email: values.email,
-            user_username: values.username,
-            user_password: values.password,
-            user_gender: values.gender
-        };
-        console.log(userData);
-        addUser({ userData });
-    };
+    function onSubmit(values: FormData){
+      const userData: UserCreate = {
+          user_age: Number(values.age), // Convert string to number
+          user_email: values.email,
+          user_username: values.username,
+          user_password: values.password,
+          user_gender: values.gender
+      };
+      console.log(userData);
+      addUser({ userData });
+  };
 
 
     return (
