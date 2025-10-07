@@ -7,7 +7,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate()
   async function logoutPost(){
-    const response = await fetch("http://localhost:8000/auth/logout", {
+    const response = await fetch("https://fitfinder-backend-l8ma.onrender.com/auth/logout", {
       method: "POST",
       credentials: "include"
     });
@@ -40,7 +40,7 @@ const Navbar = () => {
   const handleScrollHero = () => {
     const element = document.getElementById("hero-section");
     if (element) {
-        const yOffset = -100;
+        const yOffset = -80;
         const y =
         element.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
