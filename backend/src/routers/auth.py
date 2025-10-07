@@ -26,6 +26,8 @@ def set_cookie(response: Response, access_token: str):
         secure=True,  # Change to True in HTTPS
         max_age=ACCESS_TOKEN_EXPIRES_MINUTES * 60,
         samesite="none",
+        path="/",
+        domain=".onrender.com",
     )
 
 
@@ -115,5 +117,13 @@ async def login(
 @router.post("/logout")
 async def logout(response: Response):
     """Logout user by deleting cookie"""
-    response.delete_cookie("access_token")
+    response.delete_cookie(
+        key="access_token",
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+        domain=".onrender.com",
+    )
     return {"message": "Logout successful"}
+

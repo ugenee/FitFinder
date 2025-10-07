@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
-origins = ["http://localhost:5173", "http://localhost:8000",  "https://fitfinder-frontend.onrender.com", "https://fitfinder-backend-l8ma.onrender.com"]
+origins = ["http://localhost:5173",  "https://fitfinder-frontend.onrender.com"]
 
 app.add_middleware(
     CORSMiddleware,

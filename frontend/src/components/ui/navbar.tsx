@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X, LogOut, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,11 +18,13 @@ const Navbar = () => {
     return response.json();
 
   }
+  const queryClient = useQueryClient();
   const {mutate, isPending} = useMutation({
     mutationFn: logoutPost,
     onSuccess: () => {
-      navigate("/login");
-    },
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      navigate("/login", { replace: true });
+    },  
     onError: () => {
       console.log("Logout Failed")
     }
