@@ -31,15 +31,11 @@ const formSchema = z.object({
     .regex(/[a-z]/, "at least one lowercase")
     .regex(/[0-9]/, "at least one number")
     .regex(/[!@#$%^&*_]/, "at least one special character"),
-  age: z.union([
-    z.number().min(16, "Age must be at least 16").max(80, "Age must be below 80"),
-    z.string()
-      .transform((val) => val === "" ? undefined : Number(val))
-      .refine((val) => val === undefined || !isNaN(val), "Must be a number")    
-      .refine((val) => val === undefined || val >= 16, "Age must be at least 16")
-      .refine((val) => val === undefined || val <= 80, "Age must be below 80")
-  ]),
-  gender: genderEnum
+  age: z.preprocess(
+    (val) => (val === "" ? undefined : Number(val)),
+    z.number().min(16).max(80)
+  ),
+  gender: z.enum(["Male", "Female"])
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -91,15 +87,15 @@ export default function SignUp(){
     });
     
     const navigate = useNavigate()
-    const form = useForm({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            email: "",
-            username: "",
-            password: "",
-            age: undefined as number | undefined,
-            gender: undefined as "Male" | "Female" | undefined,
-        },
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema) as any,
+      defaultValues: {
+        email: "",
+        username: "",
+        password: "",
+        age: undefined,
+        gender: undefined,
+      },
     });
 
     function onSubmit(values: FormData){
