@@ -27,7 +27,6 @@ def set_cookie(response: Response, access_token: str):
         max_age=ACCESS_TOKEN_EXPIRES_MINUTES * 60,
         samesite="none",
         path="/",
-        domain=".onrender.com",
     )
 
 
@@ -123,7 +122,6 @@ async def logout(response: Response):
         secure=True,
         samesite="none",
         path="/",
-        domain=".onrender.com",
     )
     return {"message": "Logout successful"}
 
