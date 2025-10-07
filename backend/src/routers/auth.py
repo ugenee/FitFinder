@@ -23,9 +23,9 @@ def set_cookie(response: Response, access_token: str):
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=False,  # Change to True in HTTPS
+        secure=True,  # Change to True in HTTPS
         max_age=ACCESS_TOKEN_EXPIRES_MINUTES * 60,
-        samesite="lax",
+        samesite="none",
     )
 
 
