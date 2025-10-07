@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from core.config import settings
+from src.core.config import settings
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt

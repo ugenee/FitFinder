@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Enum, Integer, String
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 from sqlalchemy.dialects.mysql import TINYINT
 
-from schemas.user import Gender, UserRole
+from src.schemas.user import Gender, UserRole
 
 Base = declarative_base()
 

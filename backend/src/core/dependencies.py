@@ -3,10 +3,10 @@ from fastapi import Cookie, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
-from schemas.user import UserRole
-from db.models import User
-from db.database import AsyncSessionLocal
-from core.security import SECRET_KEY, ALGORITHM
+from src.schemas.user import UserRole
+from src.db.models import User
+from src.db.database import AsyncSessionLocal
+from src.core.security import SECRET_KEY, ALGORITHM
 from sqlalchemy import select
 
 current_user_responses: dict[int | str, dict[str, Any]] = {

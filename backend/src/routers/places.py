@@ -3,11 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 import httpx
 import certifi
-from core.dependencies import get_current_admin_user, get_db
-from db.models import Places, User
-from core.config import settings
+from src.core.dependencies import get_current_admin_user, get_db
+from src.db.models import Places, User
+from src.core.config import settings
 
-from schemas.places import (
+from src.schemas.places import (
     NearbyGymsRequest,
     NearbyGymsResponse,
     PlaceResponse,

@@ -1,11 +1,11 @@
 from typing import Union
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import places, user, auth
-from core.config import settings
+from src.routers import places, user, auth
+from src.core.config import settings
 from contextlib import asynccontextmanager
-from db.models import Base
-from db.database import engine
+from src.db.models import Base
+from src.db.database import engine
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 

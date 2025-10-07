@@ -1,8 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
-from db.models import User
-from core.dependencies import get_current_user, current_user_responses
-from schemas.user import UserResponse
+from src.db.models import User
+from src.core.dependencies import get_current_user, current_user_responses
+from src.schemas.user import UserResponse
 
 router = APIRouter(prefix="/user", tags=["user"])
 
