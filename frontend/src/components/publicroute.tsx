@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 async function fetchCurrentUser() {
-  const response = await fetch("https://fitfinder-backend-l8ma.onrender.com/user/me", {
+  const response = await fetch("/api/user/me", {
     method: "GET",
     credentials: "include", // cookies
   });
