@@ -1,5 +1,7 @@
 # Gym Finder App
-link - fitfinder-frontend.onrender.com
+
+**link - fitfinder-frontend.onrender.com**
+note that first load will be slow due to backend server shutting down after inactivity (may take up to few minutes)
 
 A modern web application that helps users **discover gyms nearby** with all the important details in one place — such as **walk-in availability, fees, and personal training options**.  
 
