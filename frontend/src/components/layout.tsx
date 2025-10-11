@@ -19,8 +19,11 @@ export default function Layout() {
       {/* Content overlay */}
       <div className="relative z-10 flex flex-col min-h-screen">
         {/* Navbar */}
-        <div className="fixed top-2 left-0 w-full z-50 flex justify-center">
-          <Navbar />
+        <div className="fixed top-4 left-0 w-full z-50 flex justify-center">
+          <div className="w-[95%]">
+            <Navbar />
+          </div>
+          
         </div>
 
         {/* Main content */}
