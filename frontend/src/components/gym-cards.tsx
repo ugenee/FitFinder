@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { MapPin, Phone, Star, Globe, Image as ImageIcon, ChevronLeft, ChevronRight, Edit, Check, X } from "lucide-react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 interface Place {
@@ -133,23 +133,20 @@ const FallbackImage = ({ gymName }: { gymName: string }) => (
   </div>
 )
 
-// Image carousel component for multiple images
+// Image carousel component with swipe support
 const ImageCarousel = ({ images, gymName }: { images: string[], gymName: string }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [imageErrors, setImageErrors] = useState<boolean[]>(new Array(images.length).fill(false))
+  const touchStartX = useRef<number>(0)
+  const touchEndX = useRef<number>(0)
+  const [isDragging, setIsDragging] = useState(false)
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => {
-      const nextIndex = (prev + 1) % images.length
-      return nextIndex
-    })
+    setCurrentImageIndex((prev) => (prev + 1) % images.length)
   }
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => {
-      const prevIndex = (prev - 1 + images.length) % images.length
-      return prevIndex
-    })
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
   }
 
   const handleImageError = (index: number) => {
@@ -158,6 +155,35 @@ const ImageCarousel = ({ images, gymName }: { images: string[], gymName: string 
       newErrors[index] = true
       return newErrors
     })
+  }
+
+  // Touch handlers for swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+    setIsDragging(true)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = () => {
+    setIsDragging(false)
+    const swipeDistance = touchStartX.current - touchEndX.current
+    const minSwipeDistance = 50 // minimum distance for a swipe
+
+    if (Math.abs(swipeDistance) > minSwipeDistance) {
+      if (swipeDistance > 0) {
+        // Swiped left - go to next image
+        nextImage()
+      } else {
+        // Swiped right - go to previous image
+        prevImage()
+      }
+    }
+
+    touchStartX.current = 0
+    touchEndX.current = 0
   }
 
   // If current image has error, try to find next available image
@@ -176,15 +202,21 @@ const ImageCarousel = ({ images, gymName }: { images: string[], gymName: string 
   const currentImage = images[currentImageIndex]
 
   return (
-    <div className="relative h-48 w-full group">
+    <div 
+      className="relative h-48 w-full group"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <img
         src={currentImage}
         alt={`${gymName} - Image ${currentImageIndex + 1}`}
-        className="w-full h-full object-cover"
+        className={`w-full h-full object-cover select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         onError={() => handleImageError(currentImageIndex)}
+        draggable={false}
       />
       
-      {/* Navigation arrows - only show if multiple images */}
+      {/* Navigation arrows - visible on desktop hover, always on mobile */}
       {images.length > 1 && (
         <>
           <button
@@ -193,7 +225,8 @@ const ImageCarousel = ({ images, gymName }: { images: string[], gymName: string 
               e.stopPropagation()
               prevImage()
             }}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full opacity-100 group-hover:opacity-100 transition-opacity z-10"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-opacity z-10"
+            aria-label="Previous image"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -203,7 +236,8 @@ const ImageCarousel = ({ images, gymName }: { images: string[], gymName: string 
               e.stopPropagation()
               nextImage()
             }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full opacity-100 group-hover:opacity-100 transition-opacity z-10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-opacity z-10"
+            aria-label="Next image"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -233,12 +267,13 @@ const ImageCarousel = ({ images, gymName }: { images: string[], gymName: string 
                   ? 'bg-white' 
                   : 'bg-white/50 hover:bg-white/70'
               }`}
+              aria-label={`Go to image ${index + 1}`}
             />
           ))}
         </div>
       )}
       
-      <div className="absolute inset-0 liquid-glass-header" />
+      <div className="absolute inset-0 liquid-glass-header pointer-events-none" />
     </div>
   )
 }
@@ -272,7 +307,6 @@ export default function NearbyGyms({ places, isAdmin = false }: NearbyGymsProps)
       updateWalkInStatus(placeId, walkIn),
     onSuccess: (data) => {
       console.log("Mutation successful:", data);
-      // Invalidate and refetch gyms data
       queryClient.invalidateQueries({ queryKey: ['nearbyGyms'] });
     },
     onError: (error) => {
@@ -292,7 +326,6 @@ export default function NearbyGyms({ places, isAdmin = false }: NearbyGymsProps)
       allPlaces: places.map(p => ({ name: p.displayName, id: p.id }))
     });
     
-    // Make sure we have a valid placeId
     if (!placeId) {
       console.error("No placeId provided");
       alert("Cannot update: Missing gym identifier");
@@ -317,7 +350,6 @@ export default function NearbyGyms({ places, isAdmin = false }: NearbyGymsProps)
                        border border-white/10 shadow-lg shadow-black/40
                        hover:shadow-xl hover:shadow-black/60 transition-all duration-300"
           >
-            {/* Image section with fallback and carousel */}
             {place.photos && place.photos.length > 0 ? (
               <ImageCarousel images={place.photos} gymName={place.displayName} />
             ) : (
@@ -337,7 +369,6 @@ export default function NearbyGyms({ places, isAdmin = false }: NearbyGymsProps)
             </CardHeader>
 
             <CardContent className="p-4 space-y-3 text-sm text-gray-300">
-              {/* Rating with fallback */}
               {place.rating > 0 ? (
                 <div className="flex items-center">
                   <Star className="w-4 h-4 mr-1 text-yellow-400" />
@@ -347,7 +378,6 @@ export default function NearbyGyms({ places, isAdmin = false }: NearbyGymsProps)
                 <RatingFallback />
               )}
 
-              {/* Phone number with fallback */}
               {place.nationalPhoneNumber ? (
                 <div className="flex items-center">
                   <Phone className="w-4 h-4 mr-1 text-gray-400" />
@@ -357,7 +387,6 @@ export default function NearbyGyms({ places, isAdmin = false }: NearbyGymsProps)
                 <PhoneFallback />
               )}
 
-              {/* Website with fallback */}
               {place.websiteUri ? (
                 <div className="flex items-center">
                   <Globe className="w-4 h-4 mr-1 text-gray-400" />
@@ -373,8 +402,6 @@ export default function NearbyGyms({ places, isAdmin = false }: NearbyGymsProps)
               ) : (
                 <WebsiteFallback />
               )}
-
-              {/* Walk-in availability with admin controls */}
               
               <div>
                 {isAdmin ? (
@@ -382,7 +409,6 @@ export default function NearbyGyms({ places, isAdmin = false }: NearbyGymsProps)
                     place={place} 
                     onUpdate={(walkIn) => {
                       console.log("onUpdate called for:", place.displayName, "with walkIn:", walkIn);
-                      // Use places_id if available, otherwise fallback to displayName
                       const idToUse = place.id || place.displayName;
                       console.log("Using ID:", idToUse);
                       handleWalkInUpdate(idToUse, walkIn);
@@ -401,7 +427,6 @@ export default function NearbyGyms({ places, isAdmin = false }: NearbyGymsProps)
                 )}
               </div>
 
-              {/* Google Maps link */}
               <div className="pt-2">
                 <Button
                   variant="outline"

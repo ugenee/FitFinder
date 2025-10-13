@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/
 import { Label } from "@radix-ui/react-label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 interface Place {
@@ -57,9 +57,8 @@ const fetchNearbyGyms = async (
   return response.json();
 };
 
-// Fetch location suggestions
 const fetchLocationSuggestions = async (query: string): Promise<GeocodeSuggestion[]> => {
-  if (!query.trim()) return [];
+  if (!query.trim() || query.length <= 2) return [];
   
   const url = new URL("/places/autocomplete", BASE_URL);
   url.searchParams.append("input", query);
@@ -73,7 +72,6 @@ const fetchLocationSuggestions = async (query: string): Promise<GeocodeSuggestio
   return data.predictions || [];
 };
 
-// Geocode a location
 const geocodeLocation = async (location: string): Promise<GeocodeResult> => {
   const url = new URL("/places/geocode", BASE_URL);
   url.searchParams.append("address", location);
@@ -90,10 +88,17 @@ interface SearchSectionProps {
 export function SearchSection({ onGymsFetched }: SearchSectionProps) {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
-  const [suggestions, setSuggestions] = useState<GeocodeSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isGeocoding, setIsGeocoding] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // React Query: fetch location suggestions with debouncing via staleTime
+  const { data: suggestions = [] } = useQuery({
+    queryKey: ["locationSuggestions", searchQuery],
+    queryFn: () => fetchLocationSuggestions(searchQuery),
+    enabled: searchQuery.length > 2 && showSuggestions,
+    staleTime: 300, // Debounce effect
+  });
 
   // React Query: fetch gyms
   const {
@@ -112,47 +117,17 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
     retry: 1,
   });
 
-  // Fetch suggestions when user types
-  useEffect(() => {
-    const getSuggestions = async () => {
-      if (selectedLocation.length > 2 && showSuggestions) {
-        try {
-          const suggestionData = await fetchLocationSuggestions(selectedLocation);
-          setSuggestions(suggestionData);
-        } catch (error) {
-          console.error("Failed to fetch suggestions:", error);
-          setSuggestions([]);
-        }
-      } else {
-        setSuggestions([]);
-      }
-    };
-
-    const debounceTimer = setTimeout(getSuggestions, 300);
-    return () => clearTimeout(debounceTimer);
-  }, [selectedLocation, showSuggestions]);
-
-  // Close suggestions when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const [isGeocoding, setIsGeocoding] = useState(false);
 
   const handleSuggestionSelect = async (suggestion: GeocodeSuggestion) => {
     setSelectedLocation(suggestion.description);
     setShowSuggestions(false);
-    setIsGeocoding(true);
+    setSearchQuery("");
     
+    setIsGeocoding(true);
     try {
       const coords = await geocodeLocation(suggestion.description);
       setCoordinates(coords);
-      // Auto-search after selecting a suggestion
       setTimeout(() => refetch(), 100);
     } catch (error) {
       alert("Failed to get coordinates for selected location.");
@@ -165,7 +140,6 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
     try {
       let coords = coordinates;
 
-      // If we have a location string but no coordinates, geocode it
       if (!coords && selectedLocation.trim()) {
         setIsGeocoding(true);
         const geoData = await geocodeLocation(selectedLocation);
@@ -198,7 +172,6 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
             `Current Location (${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)})`
           );
           setShowSuggestions(false);
-          // Wait for state update, then fetch
           setTimeout(() => refetch(), 200);
         },
         (error) => {
@@ -211,7 +184,6 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
     }
   };
 
-  // Popular locations for quick access
   const popularLocations = [
     { name: "Kuala Lumpur City Center", coords: { lat: 3.1573, lng: 101.7116 } },
     { name: "Petaling Jaya", coords: { lat: 3.1064, lng: 101.6063 } },
@@ -222,26 +194,25 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
   const handlePopularLocationSelect = (location: typeof popularLocations[0]) => {
     setSelectedLocation(location.name);
     setCoordinates(location.coords);
-    setShowSuggestions(false); // Ensure suggestions are hidden
-    setSuggestions([]); // Clear any existing suggestions
+    setShowSuggestions(false);
+    setSearchQuery("");
     setTimeout(() => refetch(), 100);
   };
 
-  const handleInputFocus = () => {
-    if (selectedLocation.length > 2) {
-      setShowSuggestions(true);
-    }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSelectedLocation(value);
+    setSearchQuery(value);
+    setShowSuggestions(true);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedLocation(e.target.value);
-    // Only show suggestions if user is actively typing (not when programmatically setting value)
-    setShowSuggestions(true);
+  const handleInputBlur = () => {
+    // Delay to allow click on suggestion to register
+    setTimeout(() => setShowSuggestions(false), 200);
   };
 
   return (
     <div>
-      {/* Location Search Section */}
       <Card className="mb-8 bg-zinc-800/60 backdrop-blur-sm border-zinc-700/50">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
@@ -255,7 +226,6 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
 
         <CardContent className="space-y-4">
           <div className="grid md:grid-cols-3 gap-4">
-            {/* Location Input */}
             <div className="md:col-span-2 space-y-2">
               <Label htmlFor="location" className="text-gray-300">
                 Enter your location
@@ -266,7 +236,8 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
                   type="text"
                   value={selectedLocation}
                   onChange={handleInputChange}
-                  onFocus={handleInputFocus}
+                  onFocus={() => searchQuery.length > 2 && setShowSuggestions(true)}
+                  onBlur={handleInputBlur}
                   label="Enter city, address, or place name..."
                   className="bg-zinc-900/80 border-zinc-600 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -280,14 +251,16 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
                   <Navigation size={18} />
                 </Button>
 
-                {/* Location Suggestions Dropdown */}
                 {showSuggestions && suggestions.length > 0 && (
                   <div className="absolute top-full left-0 right-0 bg-zinc-800 border border-zinc-600 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
                     {suggestions.map((suggestion) => (
                       <button
                         key={suggestion.place_id}
                         className="w-full text-left p-3 hover:bg-zinc-700 transition-colors border-b border-zinc-600 last:border-b-0"
-                        onClick={() => handleSuggestionSelect(suggestion)}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          handleSuggestionSelect(suggestion);
+                        }}
                       >
                         <div className="flex items-start gap-2">
                           <MapPin className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
@@ -308,7 +281,6 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
             </div>
           </div>
 
-          {/* Popular Locations */}
           <div className="space-y-2">
             <Label className="text-gray-300 text-sm">Popular locations</Label>
             <div className="flex flex-wrap gap-2">
@@ -327,12 +299,10 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
             </div>
           </div>
 
-          {/* Error Message */}
           {error && (
             <div className="text-red-400 text-sm">Error: {(error as Error).message}</div>
           )}
 
-          {/* Search Button */}
           <Button
             onClick={handleLocationSearch}
             disabled={!selectedLocation || isSearching || isGeocoding}
