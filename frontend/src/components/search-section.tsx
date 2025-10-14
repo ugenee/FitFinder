@@ -90,30 +90,29 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchTrigger, setSearchTrigger] = useState(0); // Add trigger to force re-fetch
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // React Query: fetch location suggestions with debouncing via staleTime
   const { data: suggestions = [] } = useQuery({
     queryKey: ["locationSuggestions", searchQuery],
     queryFn: () => fetchLocationSuggestions(searchQuery),
     enabled: searchQuery.length > 2 && showSuggestions,
-    staleTime: 300, // Debounce effect
+    staleTime: 300,
   });
 
-  // React Query: fetch gyms
+ // Use searchTrigger in query key to force new queries
   const {
     isLoading: isSearching,
     error,
-    refetch,
   } = useQuery({
-    queryKey: ["nearbyGyms", coordinates],
+    queryKey: ["nearbyGyms", coordinates?.lat, coordinates?.lng, searchTrigger],
     queryFn: async () => {
       if (!coordinates) throw new Error("No coordinates");
       const data = await fetchNearbyGyms(coordinates.lat, coordinates.lng);
       onGymsFetched(data.places);
       return data;
     },
-    enabled: false,
+    enabled: !!coordinates, // Enable when coordinates are available
     retry: 1,
   });
 
@@ -128,7 +127,7 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
     try {
       const coords = await geocodeLocation(suggestion.description);
       setCoordinates(coords);
-      setTimeout(() => refetch(), 100);
+      setSearchTrigger(prev => prev + 1); // Trigger new search
     } catch (error) {
       alert("Failed to get coordinates for selected location.");
     } finally {
@@ -137,24 +136,24 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
   };
 
   const handleLocationSearch = async () => {
+    if (!selectedLocation.trim()) {
+      alert("Please enter a location.");
+      return;
+    }
+
     try {
-      let coords = coordinates;
-
-      if (!coords && selectedLocation.trim()) {
-        setIsGeocoding(true);
-        const geoData = await geocodeLocation(selectedLocation);
-        coords = { lat: geoData.lat, lng: geoData.lng };
-        setCoordinates(coords);
-        setIsGeocoding(false);
-      }
-
-      if (coords) {
-        await refetch();
-      } else {
-        alert("Please enter a valid location or use current location.");
-      }
+      setIsGeocoding(true);
+      
+      // Always geocode the current input value to ensure fresh coordinates
+      const geoData = await geocodeLocation(selectedLocation);
+      const newCoords = { lat: geoData.lat, lng: geoData.lng };
+      
+      setCoordinates(newCoords);
+      setSearchTrigger(prev => prev + 1); // Trigger new search
+      
     } catch (err: any) {
       alert(err.message || "Failed to get coordinates.");
+    } finally {
       setIsGeocoding(false);
     }
   };
@@ -172,7 +171,7 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
             `Current Location (${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)})`
           );
           setShowSuggestions(false);
-          setTimeout(() => refetch(), 200);
+          setSearchTrigger(prev => prev + 1);
         },
         (error) => {
           alert("Location access denied. Please enter manually.");
@@ -196,7 +195,7 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
     setCoordinates(location.coords);
     setShowSuggestions(false);
     setSearchQuery("");
-    setTimeout(() => refetch(), 100);
+    setSearchTrigger(prev => prev + 1);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,9 +206,11 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
   };
 
   const handleInputBlur = () => {
-    // Delay to allow click on suggestion to register
     setTimeout(() => setShowSuggestions(false), 200);
   };
+
+  // Determine if button should show loading state
+  const showLoading = isSearching || isGeocoding;
 
   return (
     <div>
@@ -305,10 +306,10 @@ export function SearchSection({ onGymsFetched }: SearchSectionProps) {
 
           <Button
             onClick={handleLocationSearch}
-            disabled={!selectedLocation || isSearching || isGeocoding}
+            disabled={!selectedLocation || showLoading}
             className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 w-full"
           >
-            {(isSearching || isGeocoding) ? (
+            {showLoading ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
                 {isGeocoding ? "Getting location..." : "Searching..."}

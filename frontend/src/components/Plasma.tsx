@@ -145,6 +145,13 @@ export const Plasma: React.FC<PlasmaProps> = ({
         top: 0;
         left: 0;
         pointer-events: ${mouseInteractive ? 'auto' : 'none'};
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        -webkit-perspective: 1000;
+        perspective: 1000;
+        will-change: transform;
       `;
       
       containerRef.current.appendChild(canvas);
@@ -251,7 +258,10 @@ export const Plasma: React.FC<PlasmaProps> = ({
         left: 0,
         width: '100%',
         height: '100%',
-        background: 'transparent'
+        background: 'transparent',
+        transform: 'translateZ(0)',
+        WebkitTransform: 'translateZ(0)',
+        willChange: 'transform'
       }}
     />
   );
