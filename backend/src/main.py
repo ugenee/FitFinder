@@ -23,6 +23,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 origins = ["http://localhost:5173",  "https://fitfinder-frontend.onrender.com"]
 
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
